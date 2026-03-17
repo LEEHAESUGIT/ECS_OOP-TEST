@@ -1,4 +1,5 @@
-﻿using System;
+﻿using ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.ECSCore.ECSDomain;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -6,9 +7,48 @@ using System.Threading.Tasks;
 
 namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.OOPCore.OOPDomain
 {
-	internal class OOP_Main
+	internal class OOP_Main : ITest
 	{
-	}
+		public OOPObejct[] oopObjects;
+		float value = 1f;
+		public void Init(int objectCount)
+		{
+			oopObjects = new OOPObejct[objectCount];
+			for (int objectIndex = 0 ;objectIndex < objectCount; objectIndex++ )
+			{
+				oopObjects[objectIndex] = OOPObejct.Of(value, value , value , value , value , value);
+			}
+
+			if (oopObjects[^1].PositionX != value)
+			{
+				throw new InvalidDataException("do Not Include Data PositionXComponent");
+			}
+			if (oopObjects[^1].PositionY != value)
+			{
+				throw new InvalidDataException("do Not Include Data PositionYComponent");
+			}
+			if (oopObjects[^1].PositionZ != value)
+			{
+				throw new InvalidDataException("do Not Include Data PositionZComponent");
+			}
+			if (oopObjects[^1].VelocityX != value)
+			{
+				throw new InvalidDataException("do Not Include Data VelocityXComponent");
+			}
+			if (oopObjects[^1].VelocityY != value)
+			{
+				throw new InvalidDataException("do Not Include Data VelocityYComponent");
+			}
+			if (oopObjects[^1].VelocityZ != value)
+			{
+				throw new InvalidDataException("do Not Include Data VelocityZComponent");
+			}
+		}
+		public void Run()
+		{
+
+		}
+}
 
 
 

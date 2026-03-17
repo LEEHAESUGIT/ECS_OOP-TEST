@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.ECSCore.ECSDomain
 {
-	internal class ECS_Main
+	internal class ECS_Main : ITest
 	{
 		public ECSManager ECSCore = new ECSManager();
 		public Entity[] Entitys;
@@ -64,6 +64,10 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.ECSCore.ECSDomain
 			{
 				throw new InvalidDataException("do Not Include Data VelocityZComponent");
 			}
+		}
+		public void Run()
+		{
+
 		}
 
 
