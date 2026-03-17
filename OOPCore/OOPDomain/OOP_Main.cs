@@ -38,7 +38,28 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.OOPCore.OOPDomain
 			return new OOPObejct(positionX , positionY, positionZ , velocityX , velocityY , velocityZ);
 		}
 
+		public OOPObejct ChangePosX(float positionX) => copyWith(positionX , null, null,null, null,null);
+		public OOPObejct ChangePosY(float positionY) => copyWith(null, positionY , null,null, null,null);
+		public OOPObejct ChangePosZ(float positionZ) => copyWith(null, null, positionZ, null, null,null);
+		public OOPObejct ChangeVelX(float velovityX) => copyWith(null, null, null, velovityX, null,null);
+		public OOPObejct ChangeVelY(float velovityY) => copyWith(null, null, null,null, velovityY, null);
+		public OOPObejct ChangevelZ(float velovityZ) => copyWith(null, null, null,null, null, velovityZ);
 
+
+		private OOPObejct copyWith(	float? positionX = null,
+									float? positionY = null,
+									float? positionZ = null,
+									float? velocityX = null,
+									float? velocityY = null,
+									float? velocityZ = null)
+		{
+			return new OOPObejct(	positionX ?? this.PositionX,
+									positionY ?? this.PositionY,
+									positionZ ?? this.PositionZ,
+									velocityX ?? this.VelocityX,
+									velocityY ?? this.VelocityY,
+									velocityZ ?? this.VelocityZ);
+		}
 
 
 
