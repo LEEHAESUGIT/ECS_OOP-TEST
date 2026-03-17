@@ -1,54 +1,21 @@
 ﻿
+using System.ComponentModel;
+
 namespace ECSCore
 {
-	internal static class ConponentSetting
+	internal static class ComponentSetting
 	{
-		internal static void SetComponent()
+		internal static void SetComponent(params Type[] SetComponentTypes)
 		{
-			// flag
+			//default
 			ComponentTypeRegister.Set(typeof(NeedInit)); // 무조건 항상 0번째
-														 // Status
-			ComponentTypeRegister.Set(typeof(HPComponent));
-			ComponentTypeRegister.Set(typeof(ATKComponent));
-			ComponentTypeRegister.Set(typeof(DEFComponent));
-
-			// 
-			ComponentTypeRegister.Set(typeof(EXPComponent));
-			ComponentTypeRegister.Set(typeof(GOLDComponent));
-			ComponentTypeRegister.Set(typeof(SPEEDComponent));
+			
+			foreach(Type component in SetComponentTypes)
+			{
+				ComponentTypeRegister.Set(component);
+			}
 
 		}
-	}
-
-	// Status Components
-	internal struct HPComponent : IComponentData
-	{
-		internal float point;
-	}
-
-	internal struct DEFComponent : IComponentData
-	{
-		internal float point;
-	}
-
-	internal struct ATKComponent : IComponentData
-	{
-		internal float point;
-	}
-
-	internal struct EXPComponent : IComponentData
-	{
-		internal float point;
-	}
-
-	internal struct GOLDComponent : IComponentData
-	{
-		internal float point;
-	}
-
-	internal struct SPEEDComponent : IComponentData
-	{
-		internal float point;
 	}
 
 	// Component Flags

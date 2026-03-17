@@ -45,7 +45,7 @@ namespace ECSCore
 		public ECSManager()
 		{
 			// 컴포넌트 그룹 타입저장
-			ConponentSetting.SetComponent();
+			//ConponentSetting.SetComponent();
 		}
 
 		#region CreateEntity
