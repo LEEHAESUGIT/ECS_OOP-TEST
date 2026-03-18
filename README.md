@@ -10,3 +10,5 @@ ECS Compare to OOP
 랜덤 접근
 
 멀티 컴포넌트
+
+연산 테스트

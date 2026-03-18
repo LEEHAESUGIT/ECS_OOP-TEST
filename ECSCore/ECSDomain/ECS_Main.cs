@@ -65,10 +65,11 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.ECSCore.ECSDomain
 				throw new InvalidDataException("do Not Include Data VelocityZComponent");
 			}
 		}
-		public void Run()
-		{
-
-		}
+		public void RunSequential() { }
+		public void RunConditional() { }
+		public void RunRandom() { }
+		public void RunMultiComponent() { }
+		public void RunCalculation() { }
 
 
 	}

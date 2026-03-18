@@ -9,6 +9,11 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST
 	internal interface ITest
 	{
 		public void Init(int objectCount);
-		public void Run();
+		public void RunSequential();
+		public void RunConditional();
+		public void RunRandom();
+		public void RunMultiComponent();
+		public void RunCalculation();
+
 	}
 }
