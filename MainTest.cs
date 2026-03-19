@@ -84,11 +84,12 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST
 
 			//RunConditional
 			testTarget.Init(Objectcount);
+			for (int repeat = 0; repeat < warmUpRepeat; repeat++)
+				testTarget.RunConditional();
+
 			GC0before = GC.CollectionCount(0);
 			GC1before = GC.CollectionCount(1);
 			GC2before = GC.CollectionCount(2);
-			for (int repeat = 0; repeat < warmUpRepeat; repeat++)
-				testTarget.RunConditional();
 			sw.Restart();
 			for (int repeat = 0; repeat < MaxRepeat; repeat++)
 				testTarget.RunConditional();
@@ -100,11 +101,12 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST
 
 			//RunRandom
 			testTarget.Init(Objectcount);
+			for (int repeat = 0; repeat < warmUpRepeat; repeat++)
+				testTarget.RunRandom();
+
 			GC0before = GC.CollectionCount(0);
 			GC1before = GC.CollectionCount(1);
 			GC2before = GC.CollectionCount(2);
-			for (int repeat = 0; repeat < warmUpRepeat; repeat++)
-				testTarget.RunRandom();
 			sw.Restart();
 			for (int repeat = 0; repeat < MaxRepeat; repeat++)
 				testTarget.RunRandom();
@@ -116,11 +118,12 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST
 
 			//RunMultiComponent
 			testTarget.Init(Objectcount);
+			for (int repeat = 0; repeat < warmUpRepeat; repeat++)
+				testTarget.RunMultiComponent();
+
 			GC0before = GC.CollectionCount(0);
 			GC1before = GC.CollectionCount(1);
 			GC2before = GC.CollectionCount(2);
-			for (int repeat = 0; repeat < warmUpRepeat; repeat++)
-				testTarget.RunMultiComponent();
 			sw.Restart();
 			for (int repeat = 0; repeat < MaxRepeat; repeat++)
 				testTarget.RunMultiComponent();
@@ -132,11 +135,12 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST
 
 			//RunCalculation
 			testTarget.Init(Objectcount);
+			for (int repeat = 0; repeat < warmUpRepeat; repeat++)
+				testTarget.RunCalculation();
+
 			GC0before = GC.CollectionCount(0);
 			GC1before = GC.CollectionCount(1);
 			GC2before = GC.CollectionCount(2);
-			for (int repeat = 0; repeat < warmUpRepeat; repeat++)
-				testTarget.RunCalculation();
 			sw.Restart();
 			for (int repeat = 0; repeat < MaxRepeat; repeat++)
 				testTarget.RunCalculation();

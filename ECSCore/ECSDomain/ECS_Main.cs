@@ -12,8 +12,10 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.ECSCore.ECSDomain
 		public ECSManager ECSCore = new ECSManager();
 		public Entity[] Entitys;
 		float value = 1f;
+		int InitCount;
 		public void Init(int EntityCount)
 		{
+			InitCount = EntityCount;
 			ComponentSetting.SetComponent(typeof(PositionXComponent),
 											typeof(PositionYComponent),
 											typeof(PositionZComponent),
@@ -65,7 +67,13 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.ECSCore.ECSDomain
 				throw new InvalidDataException("do Not Include Data VelocityZComponent");
 			}
 		}
-		public void RunSequential() { }
+		public void RunSequential() 
+		{ 
+			for(int i = 0; i < InitCount ;i++)
+			{
+				 
+			}
+		}
 		public void RunConditional() { }
 		public void RunRandom() { }
 		public void RunMultiComponent() { }

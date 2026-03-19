@@ -11,8 +11,10 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.OOPCore.OOPDomain
 	{
 		public OOPObejct[] oopObjects;
 		float value = 1f;
+		int InitCount;
 		public void Init(int objectCount)
 		{
+			InitCount = objectCount;
 			oopObjects = new OOPObejct[objectCount];
 			for (int objectIndex = 0 ;objectIndex < objectCount; objectIndex++ )
 			{
