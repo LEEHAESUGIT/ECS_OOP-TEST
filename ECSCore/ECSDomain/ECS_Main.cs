@@ -67,11 +67,58 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.ECSCore.ECSDomain
 				throw new InvalidDataException("do Not Include Data VelocityZComponent");
 			}
 		}
-		public void RunSequential() 
-		{ 
-			for(int i = 0; i < InitCount ;i++)
+		public void RunSequential()
+		{
+			int[] _PosTypeIndex;
+			int[] _VelTypeIndex;
+			int archetypeIndex1;
+			int archetypeIndex2;
+			EntityQuery Query_Filter_1 = ECSCore.Query()
+				.WithAll<PositionXComponent,VelocityXComponent>()
+				.WithNone<NeedInit>()
+				.Build();
+			Query_Filter_1.UpdateArchetypes(ECSCore.entityManager);
+			_PosTypeIndex = new int[Query_Filter_1.archetypes.Count];
+			_VelTypeIndex = new int[Query_Filter_1.archetypes.Count];
+			archetypeIndex1 = 0;
+			archetypeIndex2 = 0;
+			
+			foreach (var archetype in Query_Filter_1.archetypes)
 			{
-				 
+				if (archetype.TypeIndexMap.TryGetValue(ComponentTypeRegister.GetID(typeof(PositionXComponent)), out int index1))
+					_PosTypeIndex[archetypeIndex1++] = index1;
+				else
+				{
+					_PosTypeIndex[archetypeIndex1++] = -1;
+					throw new InvalidDataException(" didn't find Type in Archetype");
+				}
+				if (archetype.TypeIndexMap.TryGetValue(ComponentTypeRegister.GetID(typeof(VelocityXComponent)), out int index2))
+					_VelTypeIndex[archetypeIndex2++] = index2;
+				else
+				{
+					_VelTypeIndex[archetypeIndex2++] = -1;
+					throw new InvalidDataException(" didn't find Type in Archetype");
+				}
+			}
+
+				archetypeIndex1 = 0;
+				archetypeIndex2 = 0;
+
+			Query_Filter_1.UpdateArchetypes(ECSCore.entityManager);
+			foreach (var archetype in Query_Filter_1.archetypes)
+			{
+				// 아키타입내부 컴포넌트 타입에 맞는 청크 순환
+				foreach (var chunk in archetype.Chunks)
+				{
+					var PosArray = chunk.GetSpan<PositionXComponent>(_PosTypeIndex[archetypeIndex1]);
+					var VelArray = chunk.GetSpan<VelocityXComponent>(_VelTypeIndex[archetypeIndex2]);
+					for (int i = 0; i < PosArray.Length; i++)
+					{
+						PosArray[i].value += VelArray[i].value;
+					}
+				}
+				archetypeIndex1++;
+				archetypeIndex2++;
 			}
 		}
 		public void RunConditional() { }
@@ -81,29 +128,7 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.ECSCore.ECSDomain
 
 
 	}
-	public struct PositionXComponent : IComponentData
-	{
-		public float value;
-	}
-	public struct PositionYComponent : IComponentData
-	{
-		public float value;
-	}
-	public struct PositionZComponent : IComponentData
-	{
-		public float value;
-	}
-	public struct VelocityXComponent : IComponentData
-	{
-		public float value;
-	}
-	public struct VelocityYComponent : IComponentData
-	{
-		public float value;
-	}
-	public struct VelocityZComponent : IComponentData
-	{
-		public float value;
-	}
+	
+	
 
 }

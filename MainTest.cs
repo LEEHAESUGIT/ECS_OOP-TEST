@@ -25,21 +25,28 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST
 
 
 			for (int ECSTestRepeat = 0; ECSTestRepeat < TestRepeat; ECSTestRepeat++)
+			{
 				ECSRepeatTestResult[ECSTestRepeat] = RunTest(new ECS_Main());
+				Console.WriteLine($"=====================ECSTest _ Unit {ECSTestRepeat}===================================");
+				Console.WriteLine($" Sequential	: {ECSRepeatTestResult[ECSTestRepeat].Sequential_Time:F2}ms | GC0 : {ECSRepeatTestResult[ECSTestRepeat].GC0[0]} , GC1 : {ECSRepeatTestResult[ECSTestRepeat].GC1[0]} , GC2 : {ECSRepeatTestResult[ECSTestRepeat].GC2[0]}");
+			}
 			ECSresult = AVGResult(ECSRepeatTestResult);
 			for (int OOPTestRepeat = 0; OOPTestRepeat < TestRepeat; OOPTestRepeat++)
 				OOPRepeatTestResult[OOPTestRepeat] = RunTest(new OOP_Main());
 			OOPresult = AVGResult(OOPRepeatTestResult);
 
+			for (int i = 0; i < 5; i++)
+			{
 
-			Console.WriteLine("$=====================ECSTest===================================");
+			}
+			Console.WriteLine("$=====================ECSTest _ AVG===================================");
 			Console.WriteLine($" Sequential	: {ECSresult.Sequential_Time:F2}ms | GC0 : {ECSresult.GC0[0]} , GC1 : {ECSresult.GC1[0]} , GC2 : {ECSresult.GC2[0]}");
 			Console.WriteLine($" Conditional	: {ECSresult.Sequential_Time:F2}ms | GC0 : {ECSresult.GC0[1]} , GC1 : {ECSresult.GC1[1]} , GC2 : {ECSresult.GC2[1]}");
 			Console.WriteLine($" Random		: {ECSresult.Sequential_Time:F2}ms | GC0 : {ECSresult.GC0[2]} , GC1 : {ECSresult.GC1[2]} , GC2 : {ECSresult.GC2[2]}");
 			Console.WriteLine($" MultiComponent : {ECSresult.Sequential_Time:F2}ms | GC0 : {ECSresult.GC0[3]} , GC1 : {ECSresult.GC1[3]} , GC2 : {ECSresult.GC2[3]}");
 			Console.WriteLine($" Calculation	: {ECSresult.Sequential_Time:F2}ms | GC0 : {ECSresult.GC0[4]} , GC1 : {ECSresult.GC1[4]} , GC2 : {ECSresult.GC2[4]}");
-			
-			Console.WriteLine("=====================OOPTest===================================");
+
+			Console.WriteLine("=====================OOPTest _ AVG===================================");
 			Console.WriteLine($" Sequential	: {OOPresult.Sequential_Time:F2}ms | GC0 : {OOPresult.GC0[0]} , GC1 : {OOPresult.GC1[0]} , GC2 : {OOPresult.GC2[0]}");
 			Console.WriteLine($" Conditional	: {OOPresult.Sequential_Time:F2}ms | GC0 : {OOPresult.GC0[1]} , GC1 : {OOPresult.GC1[1]} , GC2 : {OOPresult.GC2[1]}");
 			Console.WriteLine($" Random		: {OOPresult.Sequential_Time:F2}ms | GC0 : {OOPresult.GC0[2]} , GC1 : {OOPresult.GC1[2]} , GC2 : {OOPresult.GC2[2]}");
@@ -51,7 +58,7 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST
 
 		public static TestResult RunTest(ITest testTarget)
 		{
-			int Objectcount = 100000;
+			int Objectcount = 1000000;
 			int MaxRepeat = 10000;
 			int warmUpRepeat = 10;
 			//Stopwatch
@@ -155,7 +162,7 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST
 		private static TestResult AVGResult(TestResult[] testresults)
 		{
 			TestResult AVGResult = new TestResult();
-			for(int i = 0 ; i < testresults.Length  ;i++)
+			for (int i = 0; i < testresults.Length; i++)
 			{
 				AVGResult.Sequential_Time += testresults[i].Sequential_Time;
 				AVGResult.Conditional_Time += testresults[i].Conditional_Time;
@@ -163,7 +170,7 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST
 				AVGResult.MultiComponent_Time += testresults[i].MultiComponent_Time;
 				AVGResult.Calculation_Time += testresults[i].Calculation_Time;
 
-				for(int j = 0; j< 5; j++)
+				for (int j = 0; j < 5; j++)
 				{
 					AVGResult.GC0[i] += testresults[j].GC0[i];
 					AVGResult.GC1[i] += testresults[j].GC1[i];
@@ -189,16 +196,16 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST
 	public class TestResult
 	{
 		// Time
-		public double Sequential_Time;		//GC0[0] , GC1[0] , GC2[0]
+		public double Sequential_Time;      //GC0[0] , GC1[0] , GC2[0]
 		public double Conditional_Time;     //GC0[1] , GC1[1] , GC2[1]
 		public double Random_Time;          //GC0[2] , GC1[2] , GC2[2]
 		public double MultiComponent_Time;  //GC0[3] , GC1[3] , GC2[3]
 		public double Calculation_Time;     //GC0[4] , GC1[4] , GC2[4]
-		// GC
+											// GC
 		public int[] GC0 = new int[5];
 		public int[] GC1 = new int[5];
 		public int[] GC2 = new int[5];
 	}
-	
+
 
 }
