@@ -3,7 +3,7 @@
 	public interface ISystem
 	{
 
-		public void Set(ECSManager ecs);
-		public void OnUpdate(ECSManager ecs);
+		public void Set(ECSManager ecsMG);
+		public void OnUpdate(ECSManager ecsMG);
 	}
 }

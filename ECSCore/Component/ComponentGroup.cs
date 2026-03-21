@@ -41,4 +41,9 @@ namespace ECSCore
 	{
 		public float value;
 	}
+	public struct ActiveComponent : IComponentData
+	{
+		public bool Is;
+	}
+	
 }

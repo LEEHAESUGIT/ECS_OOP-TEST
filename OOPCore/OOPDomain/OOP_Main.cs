@@ -1,24 +1,28 @@
-﻿using ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.ECSCore.ECSDomain;
+﻿using ECS_OOP_CompareTEST;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.OOPCore.OOPDomain
+namespace ECS_OOP_CompareTEST
 {
 	internal class OOP_Main : ITest
 	{
 		public OOPObejct[] oopObjects;
 		float value = 1f;
 		int InitCount;
+
+		SequentialTestSystem_OOP sequential = new SequentialTestSystem_OOP();
+		ConditionalTestSystem_OOP conditional = new ConditionalTestSystem_OOP();
 		public void Init(int objectCount)
 		{
 			InitCount = objectCount;
 			oopObjects = new OOPObejct[objectCount];
-			for (int objectIndex = 0 ;objectIndex < objectCount; objectIndex++ )
+			Random rand = new Random();
+			for (int objectIndex = 0; objectIndex < objectCount; objectIndex++)
 			{
-				oopObjects[objectIndex] = OOPObejct.Of(value, value , value , value , value , value);
+				oopObjects[objectIndex] = OOPObejct.Of(value, value, value, value, value, value ,rand.Next(2)==1);
 			}
 
 			if (oopObjects[^1].PositionX != value)
@@ -46,8 +50,26 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.OOPCore.OOPDomain
 				throw new InvalidDataException("do Not Include Data VelocityZComponent");
 			}
 		}
-		public void RunSequential() { }
-		public void RunConditional() { }
+		public OOPObejct[] Clone()
+		{
+			var copy = oopObjects.Select(o => OOPObejct.Of(o.PositionX,
+															o.PositionY,
+															o.PositionZ,
+															o.VelocityX,
+															o.VelocityY,
+															o.VelocityZ,
+															o.IsActive)).ToArray();
+			return copy;
+		}		
+
+		public void RunSequential()
+		{
+			sequential.OnUpdate(oopObjects);
+		}
+		public void RunConditional() 
+		{ 
+			conditional.OnUpdate(oopObjects);
+		}
 		public void RunRandom() { }
 		public void RunMultiComponent() { }
 		public void RunCalculation() { }
@@ -65,8 +87,9 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.OOPCore.OOPDomain
 		public float VelocityX { get; private set; }
 		public float VelocityY { get; private set; }
 		public float VelocityZ { get; private set; }
+		public bool IsActive { get; private set; }
 
-		private OOPObejct(float positionX, float positionY, float positionZ, float velocityX, float velocityY, float velocityZ)
+		private OOPObejct(float positionX, float positionY, float positionZ, float velocityX, float velocityY, float velocityZ, bool isActive)
 		{
 			this.PositionX = positionX;
 			this.PositionY = positionY;
@@ -74,34 +97,38 @@ namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST.OOPCore.OOPDomain
 			this.VelocityX = velocityX;
 			this.VelocityY = velocityY;
 			this.VelocityZ = velocityZ;
+			this.IsActive = isActive;
 		}
 
-		public static OOPObejct Of(float positionX, float positionY, float positionZ, float velocityX, float velocityY, float velocityZ)
+		public static OOPObejct Of(float positionX, float positionY, float positionZ, float velocityX, float velocityY, float velocityZ, bool isActive)
 		{
-			return new OOPObejct(positionX , positionY, positionZ , velocityX , velocityY , velocityZ);
+			return new OOPObejct(positionX, positionY, positionZ, velocityX, velocityY, velocityZ, isActive);
 		}
 
-		public OOPObejct ChangePosX(float positionX) => copyWith(positionX , null, null,null, null,null);
-		public OOPObejct ChangePosY(float positionY) => copyWith(null, positionY , null,null, null,null);
-		public OOPObejct ChangePosZ(float positionZ) => copyWith(null, null, positionZ, null, null,null);
-		public OOPObejct ChangeVelX(float velovityX) => copyWith(null, null, null, velovityX, null,null);
-		public OOPObejct ChangeVelY(float velovityY) => copyWith(null, null, null,null, velovityY, null);
-		public OOPObejct ChangevelZ(float velovityZ) => copyWith(null, null, null,null, null, velovityZ);
+		public OOPObejct ChangePosX(float positionX) => copyWith(positionX, null, null, null, null, null, true);
+		public OOPObejct ChangePosY(float positionY) => copyWith(null, positionY, null, null, null, null, true);
+		public OOPObejct ChangePosZ(float positionZ) => copyWith(null, null, positionZ, null, null, null, true);
+		public OOPObejct ChangeVelX(float velovityX) => copyWith(null, null, null, velovityX, null, null, true);
+		public OOPObejct ChangeVelY(float velovityY) => copyWith(null, null, null, null, velovityY, null, true);
+		public OOPObejct ChangeVelZ(float velovityZ) => copyWith(null, null, null, null, null, velovityZ, true);
+		public OOPObejct ChangeActive(bool Is) => copyWith(null, null, null, null, null, null, Is);
 
 
-		private OOPObejct copyWith(	float? positionX = null,
+		private OOPObejct copyWith(float? positionX = null,
 									float? positionY = null,
 									float? positionZ = null,
 									float? velocityX = null,
 									float? velocityY = null,
-									float? velocityZ = null)
+									float? velocityZ = null,
+									bool? Is = true)
 		{
-			return new OOPObejct(	positionX ?? this.PositionX,
+			return new OOPObejct(positionX ?? this.PositionX,
 									positionY ?? this.PositionY,
 									positionZ ?? this.PositionZ,
 									velocityX ?? this.VelocityX,
 									velocityY ?? this.VelocityY,
-									velocityZ ?? this.VelocityZ);
+									velocityZ ?? this.VelocityZ,
+									Is ?? this.IsActive);
 		}
 
 

@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ECS_OOP_CompareTEST.TEST.ECS_OOP_TEST
+namespace ECS_OOP_CompareTEST
 {
 	internal interface ITest
 	{
