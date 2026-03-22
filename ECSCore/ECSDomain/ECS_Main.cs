@@ -76,13 +76,11 @@ namespace ECS_OOP_CompareTEST
 			{
 				throw new InvalidDataException("do Not Include Data VelocityZComponent");
 			}
+			sequential.Set(ECSCore);
 		}
 		
-
-
 		public void RunSequential()
 		{
-			sequential.Set(ECSCore);
 			sequential.OnUpdate(ECSCore);
 		}
 		//public void RunSequential()

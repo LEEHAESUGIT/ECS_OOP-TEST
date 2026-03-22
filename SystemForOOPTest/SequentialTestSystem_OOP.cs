@@ -13,7 +13,9 @@ namespace ECS_OOP_CompareTEST
 		{
 			foreach (var oopObject in oopObjects)
 			{
-				oopObject.ChangePosX(oopObject.PositionX + oopObject.VelocityX);
+				oopObject.PositionX += oopObject.VelocityX;
+
+				//oopObject.ChangePosX(oopObject.PositionX + oopObject.VelocityX);
 			}
 		}
 

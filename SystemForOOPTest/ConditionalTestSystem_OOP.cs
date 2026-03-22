@@ -14,7 +14,7 @@ namespace ECS_OOP_CompareTEST
 			{
 				if(Object.IsActive)
 				{
-					Object.ChangePosX(Object.PositionY + Object.VelocityY * 2.5f);
+					Object.PositionX = Object.PositionY + (Object.VelocityY * 2.5f);
 				}
 
 			}
