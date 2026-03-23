@@ -9,17 +9,24 @@ namespace ECS_OOP_CompareTEST
 {
 	internal class OOP_Main : ITest
 	{
-		public OOPObejct[] oopObjects;
 		float value = 1f;
 		int InitCount;
 
+		Random rand = new Random();
+		public OOPObejct[] oopObjects;
+		
+
 		SequentialTestSystem_OOP sequential = new SequentialTestSystem_OOP();
 		ConditionalTestSystem_OOP conditional = new ConditionalTestSystem_OOP();
+		RandomTestSystem_OOP random = new RandomTestSystem_OOP();
+		MultiComponentTestSystem_OOP multiComponent = new MultiComponentTestSystem_OOP();
+		CaculationTestSystem_OOP caculation = new CaculationTestSystem_OOP();
 		public void Init(int objectCount)
 		{
 			InitCount = objectCount;
 			oopObjects = new OOPObejct[objectCount];
-			Random rand = new Random();
+			
+
 			for (int objectIndex = 0; objectIndex < objectCount; objectIndex++)
 			{
 				oopObjects[objectIndex] = OOPObejct.Of(value, value, value, value, value, value ,rand.Next(2)==1);
@@ -49,18 +56,24 @@ namespace ECS_OOP_CompareTEST
 			{
 				throw new InvalidDataException("do Not Include Data VelocityZComponent");
 			}
+			sequential.Set(oopObjects);
+			conditional.Set(oopObjects);
+			random.Set(oopObjects);
+			multiComponent.Set(oopObjects);
+			caculation.Set(oopObjects);
+
 		}
-		public OOPObejct[] Clone()
-		{
-			var copy = oopObjects.Select(o => OOPObejct.Of(o.PositionX,
-															o.PositionY,
-															o.PositionZ,
-															o.VelocityX,
-															o.VelocityY,
-															o.VelocityZ,
-															o.IsActive)).ToArray();
-			return copy;
-		}		
+		//public OOPObejct[] Clone()
+		//{
+		//	var copy = oopObjects.Select(o => OOPObejct.Of(o.PositionX,
+		//													o.PositionY,
+		//													o.PositionZ,
+		//													o.VelocityX,
+		//													o.VelocityY,
+		//													o.VelocityZ,
+		//													o.IsActive)).ToArray();
+		//	return copy;
+		//}		
 
 		public void RunSequential()
 		{
@@ -70,9 +83,25 @@ namespace ECS_OOP_CompareTEST
 		{ 
 			conditional.OnUpdate(oopObjects);
 		}
-		public void RunRandom() { }
-		public void RunMultiComponent() { }
-		public void RunCalculation() { }
+		public void RunRandom() 
+		{ 
+			random.OnUpdate(oopObjects);
+		}
+		public void RunMultiComponent() 
+		{
+			multiComponent.OnUpdate(oopObjects);
+		}
+		public void RunCalculation() 
+		{
+			caculation.OnUpdate(oopObjects);
+		}
+
+
+
+
+		// 
+		
+
 	}
 
 

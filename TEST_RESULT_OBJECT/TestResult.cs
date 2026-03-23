@@ -21,6 +21,16 @@ namespace ECS_OOP_CompareTEST
 		public double TimeToEntityCreate;
 		public double MemoryToEntityCreate;
 
+		public InitTestResult()
+		{
+			this.Elapsed_Time = 0;
+			this.Allocated_Memory = 0;
+			this.GC0 = 0;
+			this.GC1 = 0;
+			this.GC2 = 0;
+			this.TimeToEntityCreate = 0;
+			this.MemoryToEntityCreate = 0;
+		}
 	}
 	// 생성 테스트 결과들의 평균값
 	internal class InitTestAVGResult
@@ -37,8 +47,16 @@ namespace ECS_OOP_CompareTEST
 		public double TimeToEntityCreate;
 		public double MemoryToEntityCreate;
 
-		public InitTestAVGResult() { }
-
+		public InitTestAVGResult()
+		{
+			this.Elapsed_Time = 0;
+			this.Allocated_Memory = 0;
+			this.GC0 = 0;
+			this.GC1 = 0;
+			this.GC2 = 0;
+			this.TimeToEntityCreate = 0;
+			this.MemoryToEntityCreate = 0;
+		}
 		public void AVGCaculatorForResult(InitTestResult[] results)
 		{
 			for (int i = 0; i < results.Length; i++)
@@ -75,6 +93,16 @@ namespace ECS_OOP_CompareTEST
 		public long Allocated_Memory;
 		// 5. 처리량 Throughput
 		public double SecForProcess_Time;
+		public RunTestResult()
+		{
+			this.Elapsed_Time = 0;
+			this.AVG_Process_Time = 0;
+			this.GC0 = 0;
+			this.GC1 = 0;
+			this.GC2 = 0;
+			this.Allocated_Memory = 0;
+			this.SecForProcess_Time = 0;
+		}
 	}
 
 	internal class RunTestAVGResult
@@ -91,7 +119,16 @@ namespace ECS_OOP_CompareTEST
 		// 5. 처리량 Throughput
 		public double SecForProcess_Time;
 
-		public RunTestAVGResult() { }
+		public RunTestAVGResult() 
+		{
+			this.Elapsed_Time = 0;
+			this.AVG_Process_Time = 0;
+			this.GC0 = 0;
+			this.GC1 = 0;
+			this.GC2 = 0;
+			this.Allocated_Memory = 0;
+			this.SecForProcess_Time = 0;
+		}
 
 		public void AVGCaculatorForResult(RunTestResult[] results)
 		{

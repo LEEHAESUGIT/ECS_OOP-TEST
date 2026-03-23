@@ -7,15 +7,21 @@ using System.Threading.Tasks;
 
 namespace ECS_OOP_CompareTEST
 {
-	internal class SequentialTestSystem_OOP
+	internal class SequentialTestSystem_OOP : IObject
 	{
+		public void Set(OOPObejct[] oopObjects)
+		{
+
+		}
+
 		public void OnUpdate(OOPObejct[] oopObjects)
 		{
-			foreach (var oopObject in oopObjects)
+			for (int i = 0; i < oopObjects.Length; i++)
 			{
-				oopObject.PositionX += oopObject.VelocityX;
-
-				//oopObject.ChangePosX(oopObject.PositionX + oopObject.VelocityX);
+				var obj = oopObjects[i];
+				obj.PositionX += obj.VelocityX;
+				obj.PositionY += obj.VelocityY;
+				obj.PositionZ += obj.VelocityZ;
 			}
 		}
 

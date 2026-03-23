@@ -6,7 +6,11 @@ using System.Threading.Tasks;
 
 namespace ECS_OOP_CompareTEST
 {
-	internal class CaculationTestSystem_ECS
+	internal interface IObject
 	{
+		public void Set(OOPObejct[] OOPOBJ);
+		public void OnUpdate(OOPObejct[] OOPOBJ);
+
+
 	}
 }

@@ -14,7 +14,7 @@ namespace ECS_OOP_CompareTEST
 	{
 		public static void Main()
 		{
-			const int Objectcount = 300000;
+			const int Objectcount = 100000;
 			const int RepeatCount = 20;
 			const int warmup = 3;
 
@@ -45,6 +45,23 @@ namespace ECS_OOP_CompareTEST
 			RunTestAVGResult MultiComponent_Run_AVG = new RunTestAVGResult();
 			RunTestAVGResult Calculation_Run_AVG = new RunTestAVGResult();
 
+			// 테스트를 위한 임시 초기화
+			for(int i = 0; i < RepeatCount ; i++)
+			{
+				Sequential_Init[i] = new();
+				Conditional_Init[i] = new();
+				Random_Init[i] = new();
+				MultiComponent_Init[i] = new();
+				Calculation_Init[i] = new();
+
+				Sequential_Run[i] = new();
+				Conditional_Run[i] = new();
+				Random_Run[i] = new();
+				MultiComponent_Run[i] = new();
+				Calculation_Run[i] = new();
+			}
+
+
 
 			// ECS
 			#region ECSTEST
@@ -53,16 +70,21 @@ namespace ECS_OOP_CompareTEST
 								RepeatCount,
 								warmup,
 								obj => InitTest((ECS_Main)obj, Objectcount),
-								obj => SequentialTest((ECS_Main)obj , Objectcount),
-								out InitTestResult[] aa,
-								out RunTestResult[] bb);
-			Sequential_Init = aa;
-			Sequential_Run = bb;
+								obj => SequentialTest((ECS_Main)obj, Objectcount),
+								out InitTestResult[] ECS_init_SequentialResults,
+								out RunTestResult[] ECS_run_SequentialResults);
+			Sequential_Init = ECS_init_SequentialResults;
+			Sequential_Run = ECS_run_SequentialResults;
 			Sequential_Init_AVG.AVGCaculatorForResult(Sequential_Init);
 			Sequential_Run_AVG.AVGCaculatorForResult(Sequential_Run);
-			ECS_ResultView(RepeatCount,Sequential_Init,Sequential_Run);
-			ECS_ResultAVGView(Sequential_Init_AVG , Sequential_Run_AVG);
 
+
+
+			ECS_ResultView(RepeatCount, Sequential_Init, Conditional_Init, Random_Init, MultiComponent_Init , Calculation_Init,
+										Sequential_Run , Conditional_Run , Random_Run , MultiComponent_Run , Calculation_Run);
+
+			ECS_ResultAVGView(Sequential_Init_AVG, Conditional_Init_AVG, Random_Init_AVG, MultiComponent_Init_AVG, Calculation_Init_AVG,
+							  Sequential_Run_AVG, Conditional_Run_AVG, Random_Run_AVG, MultiComponent_Run_AVG, Calculation_Run_AVG);
 
 
 
@@ -82,20 +104,78 @@ namespace ECS_OOP_CompareTEST
 			#endregion
 
 			#region OOPTEST
+			//SequentialTest
 			RepeatTest_Cycle(typeof(OOP_Main),
 								Objectcount,
 								RepeatCount,
 								warmup,
 								obj => InitTest((OOP_Main)obj, Objectcount),
 								obj => SequentialTest((OOP_Main)obj, Objectcount),
-								out InitTestResult[] cc,
-								out RunTestResult[] dd);
-			Sequential_Init = cc;
-			Sequential_Run = dd;
+								out InitTestResult[] OOP_init_SequentialResults,
+								out RunTestResult[] OOP_run_SequentialResults);
+			Sequential_Init = OOP_init_SequentialResults;
+			Sequential_Run = OOP_run_SequentialResults;
 			Sequential_Init_AVG.AVGCaculatorForResult(Sequential_Init);
 			Sequential_Run_AVG.AVGCaculatorForResult(Sequential_Run);
-			OOP_ResultView(RepeatCount, Sequential_Init, Sequential_Run);
-			OOP_ResultAVGView(Sequential_Init_AVG, Sequential_Run_AVG);
+			//ConditionalTest
+			RepeatTest_Cycle(typeof(OOP_Main),
+								Objectcount,
+								RepeatCount,
+								warmup,
+								obj => InitTest((OOP_Main)obj, Objectcount),
+								obj => ConditionalTest((OOP_Main)obj, Objectcount),
+								out InitTestResult[] OOP_init_ConditionalResults,
+								out RunTestResult[] OOP_run_ConditionalResults);
+			Conditional_Init = OOP_init_ConditionalResults;
+			Conditional_Run = OOP_run_ConditionalResults;
+			Conditional_Init_AVG.AVGCaculatorForResult(Conditional_Init);
+			Conditional_Run_AVG.AVGCaculatorForResult(Conditional_Run);
+			//RandomTest
+			RepeatTest_Cycle(typeof(OOP_Main),
+								Objectcount,
+								RepeatCount,
+								warmup,
+								obj => InitTest((OOP_Main)obj, Objectcount),
+								obj => RandomTest((OOP_Main)obj, Objectcount),
+								out InitTestResult[] OOP_init_RandomResults,
+								out RunTestResult[] OOP_run_RandomResults);
+			Random_Init = OOP_init_RandomResults;
+			Random_Run = OOP_run_RandomResults;
+			Random_Init_AVG.AVGCaculatorForResult(Random_Init);
+			Random_Run_AVG.AVGCaculatorForResult(Random_Run);
+			//MultiComponentTest
+			//RepeatTest_Cycle(typeof(OOP_Main),
+			//					Objectcount,
+			//					RepeatCount,
+			//					warmup,
+			//					obj => InitTest((OOP_Main)obj, Objectcount),
+			//					obj => MultiComponentTest((OOP_Main)obj, Objectcount),
+			//					out InitTestResult[] OOP_init_MultiComponentResults,
+			//					out RunTestResult[] OOP_run_MultiComponentResults);
+			//MultiComponent_Init = OOP_init_MultiComponentResults;
+			//MultiComponent_Run = OOP_run_MultiComponentResults;
+			//MultiComponent_Init_AVG.AVGCaculatorForResult(MultiComponent_Init);
+			//MultiComponent_Run_AVG.AVGCaculatorForResult(MultiComponent_Run);
+			// CaculationTest
+			//RepeatTest_Cycle(typeof(OOP_Main),
+			//					Objectcount,
+			//					RepeatCount,
+			//					warmup,
+			//					obj => InitTest((OOP_Main)obj, Objectcount),
+			//					obj => CalculationTest((OOP_Main)obj, Objectcount),
+			//					out InitTestResult[] OOP_init_CalculationResults,
+			//					out RunTestResult[] OOP_run_CalculationResults);
+			//Calculation_Init = OOP_init_CalculationResults;
+			//Calculation_Run = OOP_run_CalculationResults;
+			//Calculation_Init_AVG.AVGCaculatorForResult(Calculation_Init);
+			//Calculation_Run_AVG.AVGCaculatorForResult(Calculation_Run);
+
+
+			OOP_ResultView(RepeatCount, Sequential_Init, Conditional_Init, Random_Init, MultiComponent_Init, Calculation_Init,
+										Sequential_Run, Conditional_Run, Random_Run, MultiComponent_Run, Calculation_Run);
+
+			OOP_ResultAVGView(Sequential_Init_AVG, Conditional_Init_AVG, Random_Init_AVG, MultiComponent_Init_AVG, Calculation_Init_AVG,
+							  Sequential_Run_AVG, Conditional_Run_AVG, Random_Run_AVG, MultiComponent_Run_AVG, Calculation_Run_AVG);
 			#endregion
 
 
@@ -153,41 +233,81 @@ namespace ECS_OOP_CompareTEST
 
 		}
 
-		public static void ECS_ResultView(int repeatCount , InitTestResult[] init , RunTestResult[] run)
+		public static void ECS_ResultView(int repeatCount,	InitTestResult[] init_Sequential, InitTestResult[] init_Conditional, InitTestResult[] init_Random, InitTestResult[] init_MultiComponent, InitTestResult[] init_Caculation,
+															RunTestResult[] run_Sequential , RunTestResult[] run_Conditional, RunTestResult[] run_Random, RunTestResult[] run_MultiComponent, RunTestResult[] run_Caculation)
 		{
-			for(int i = 0 ; i < repeatCount; i++)
+			for (int i = 0; i < repeatCount; i++)
 			{
-				Console.WriteLine($"=====================ECSTest_Init {i+1}===================================");
-				Console.WriteLine($" Sequential	: {init[i].Elapsed_Time:F2}ms | Allocated_Memory : {init[i].Allocated_Memory:F2} | TimeToEntityCreate : {init[i].TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init[i].MemoryToEntityCreate:F2} | GC0 : {init[i].GC0:F1} , GC1 : {init[i].GC1:F1} , GC2 : {init[i].GC2:F1}");
-				Console.WriteLine($"=====================ECSTest_Run {i+1}===================================");
-				Console.WriteLine($" Sequential	: {run[i].Elapsed_Time:F2}ms | Allocated_Memory : {run[i].Allocated_Memory:F2} | AVG_Process_Time : {run[i].AVG_Process_Time:F2}  | SecForProcess_Time : {run[i].SecForProcess_Time:F2} | GC0 : {run[i].GC0:F1} , GC1 : {run[i].GC1:F1} , GC2 : {run[i].GC2:F1}");
+				Console.WriteLine($"=====================ECSTest_Init {i + 1}===================================");
+				Console.WriteLine($" Sequential	: {init_Sequential[i].Elapsed_Time:F2}ms | Allocated_Memory : {init_Sequential[i].Allocated_Memory:F2} | TimeToEntityCreate : {init_Sequential[i].TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Sequential[i].MemoryToEntityCreate:F2} | GC0 : {init_Sequential[i].GC0:F1} , GC1 : {init_Sequential[i].GC1:F1} , GC2 : {init_Sequential[i].GC2:F1}");
+				Console.WriteLine($" Conditonal	: {init_Conditional[i].Elapsed_Time:F2}ms | Allocated_Memory : {init_Conditional[i].Allocated_Memory:F2} | TimeToEntityCreate : {init_Conditional[i].TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Conditional[i].MemoryToEntityCreate:F2} | GC0 : {init_Conditional[i].GC0:F1} , GC1 : {init_Conditional[i].GC1:F1} , GC2 : {init_Conditional[i].GC2:F1}");
+				Console.WriteLine($" Random		: {init_Random[i].Elapsed_Time:F2}ms | Allocated_Memory : {init_Random[i].Allocated_Memory:F2} | TimeToEntityCreate : {init_Random[i].TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Random[i].MemoryToEntityCreate:F2} | GC0 : {init_Random[i].GC0:F1} , GC1 : {init_Random[i].GC1:F1} , GC2 : {init_Random[i].GC2:F1}");
+				Console.WriteLine($" MultiComponent	: {init_MultiComponent[i].Elapsed_Time:F2}ms | Allocated_Memory : {init_MultiComponent[i].Allocated_Memory:F2} | TimeToEntityCreate : {init_MultiComponent[i].TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_MultiComponent[i].MemoryToEntityCreate:F2} | GC0 : {init_MultiComponent[i].GC0:F1} , GC1 : {init_MultiComponent[i].GC1:F1} , GC2 : {init_MultiComponent[i].GC2:F1}");
+				Console.WriteLine($" Caculation	: {init_Caculation[i].Elapsed_Time:F2}ms | Allocated_Memory : {init_Caculation[i].Allocated_Memory:F2} | TimeToEntityCreate : {init_Caculation[i].TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Caculation[i].MemoryToEntityCreate:F2} | GC0 : {init_Caculation[i].GC0:F1} , GC1 : {init_Caculation[i].GC1:F1} , GC2 : {init_Caculation[i].GC2:F1}");
+				Console.WriteLine($"=====================ECSTest_Run {i + 1}===================================");
+				Console.WriteLine($" Sequential	: {run_Sequential[i].Elapsed_Time:F2}ms | Allocated_Memory : {run_Sequential[i].Allocated_Memory:F2} | AVG_Process_Time : {run_Sequential[i].AVG_Process_Time:F2}  | SecForProcess_Time : {run_Sequential[i].SecForProcess_Time:F2}  | GC0 :  {run_Sequential[i].GC0:F1} , GC1 : {run_Sequential[i].GC1:F1} , GC2 : {run_Sequential[i].GC2:F1}");
+				Console.WriteLine($" Conditonal	: {run_Conditional[i].Elapsed_Time:F2}ms | Allocated_Memory : {run_Conditional[i].Allocated_Memory:F2} | AVG_Process_Time : {run_Conditional[i].AVG_Process_Time:F2}  | SecForProcess_Time : {run_Conditional[i].SecForProcess_Time:F2} | GC0 : {run_Conditional[i].GC0:F1} , GC1 : {run_Conditional[i].GC1:F1} , GC2 : {run_Conditional[i].GC2:F1}");
+				Console.WriteLine($" Random		: {run_Random[i].Elapsed_Time:F2}ms | Allocated_Memory : {run_Random[i].Allocated_Memory:F2} | AVG_Process_Time : {run_Random[i].AVG_Process_Time:F2}  | SecForProcess_Time : {run_Random[i].SecForProcess_Time:F2} | GC0 : {run_Random[i].GC0:F1} , GC1 : {run_Random[i].GC1:F1} , GC2 : {run_Random[i].GC2:F1}");
+				Console.WriteLine($" MultiComponent	: {run_MultiComponent[i].Elapsed_Time:F2}ms | Allocated_Memory : {run_MultiComponent[i].Allocated_Memory:F2} | AVG_Process_Time : {run_MultiComponent[i].AVG_Process_Time:F2}  | SecForProcess_Time : {run_MultiComponent[i].SecForProcess_Time:F2} | GC0 : {run_MultiComponent[i].GC0:F1} , GC1 : {run_MultiComponent[i].GC1:F1} , GC2 : {run_MultiComponent[i].GC2:F1}");
+				Console.WriteLine($" Caculation	: {run_Caculation[i].Elapsed_Time:F2}ms | Allocated_Memory : {run_Caculation[i].Allocated_Memory:F2} | AVG_Process_Time : {run_Caculation[i].AVG_Process_Time:F2}  | SecForProcess_Time : {run_Caculation[i].SecForProcess_Time:F2} | GC0 : {run_Caculation[i].GC0:F1} , GC1 : {run_Caculation[i].GC1:F1} , GC2 : {run_Caculation[i].GC2:F1}");
 				Console.WriteLine("\n");
 			}
 		}
-		public static void ECS_ResultAVGView(InitTestAVGResult init , RunTestAVGResult run)
+		public static void ECS_ResultAVGView(	InitTestAVGResult init_Sequential, InitTestAVGResult init_Conditional, InitTestAVGResult init_Random, InitTestAVGResult init_MultiComponent, InitTestAVGResult init_Caculation,
+												RunTestAVGResult run_Sequential, RunTestAVGResult run_Conditional, RunTestAVGResult run_Random, RunTestAVGResult run_MultiComponent, RunTestAVGResult run_Caculation)
 		{
 			Console.WriteLine($"=====================ECSTest_Init_AVG ===================================");
-			Console.WriteLine($" Sequential	: {init.Elapsed_Time:F2}ms | Allocated_Memory : {init.Allocated_Memory:F2} | TimeToEntityCreate : {init.TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init.MemoryToEntityCreate:F2} | GC0 : {init.GC0:F1} , GC1 : {init.GC1:F1} , GC2 : {init.GC2:F1}");
+			Console.WriteLine($" Sequential	: {init_Sequential.Elapsed_Time:F2}ms | Allocated_Memory : {init_Sequential.Allocated_Memory:F2} | TimeToEntityCreate : {init_Sequential.TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Sequential.MemoryToEntityCreate:F2} | GC0 : {init_Sequential.GC0:F1} , GC1 : {init_Sequential.GC1:F1} , GC2 : {init_Sequential.GC2:F1}");
+			Console.WriteLine($" Conditonal	: {init_Conditional.Elapsed_Time:F2}ms | Allocated_Memory : {init_Conditional.Allocated_Memory:F2} | TimeToEntityCreate : {init_Conditional.TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Conditional.MemoryToEntityCreate:F2} | GC0 : {init_Conditional.GC0:F1} , GC1 : {init_Conditional.GC1:F1} , GC2 : {init_Conditional.GC2:F1}");
+			Console.WriteLine($" Random		: {init_Random.Elapsed_Time:F2}ms | Allocated_Memory : {init_Random.Allocated_Memory:F2} | TimeToEntityCreate : {init_Random.TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Random.MemoryToEntityCreate:F2} | GC0 : {init_Random.GC0:F1} , GC1 : {init_Random.GC1:F1} , GC2 : {init_Random.GC2:F1}");
+			Console.WriteLine($" MultiComponent	: {init_MultiComponent.Elapsed_Time:F2}ms | Allocated_Memory : {init_MultiComponent.Allocated_Memory:F2} | TimeToEntityCreate : {init_MultiComponent.TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_MultiComponent.MemoryToEntityCreate:F2} | GC0 : {init_MultiComponent.GC0:F1} , GC1 : {init_MultiComponent.GC1:F1} , GC2 : {init_MultiComponent.GC2:F1}");
+			Console.WriteLine($" Caculation	: {init_Caculation.Elapsed_Time:F2}ms | Allocated_Memory : {init_Caculation.Allocated_Memory:F2} | TimeToEntityCreate : {init_Caculation.TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Caculation.MemoryToEntityCreate:F2} | GC0 : {init_Caculation.GC0:F1} , GC1 : {init_Caculation.GC1:F1} , GC2 : {init_Caculation.GC2:F1}");
 			Console.WriteLine($"=====================ECSTest_Run_AVG===================================");
-			Console.WriteLine($" Sequential	: {run.Elapsed_Time:F2}ms | Allocated_Memory : {run.Allocated_Memory:F2} | AVG_Process_Time : {run.AVG_Process_Time:F2}  | SecForProcess_Time : {run.SecForProcess_Time:F2} | GC0 : {run.GC0:F1} , GC1 : {run.GC1:F1} , GC2 : {run.GC2:F1}");
+			Console.WriteLine($" Sequential	: {run_Sequential.Elapsed_Time:F2}ms | Allocated_Memory : {run_Sequential.Allocated_Memory:F2} | AVG_Process_Time : {run_Sequential.AVG_Process_Time:F2}  | SecForProcess_Time : {run_Sequential.SecForProcess_Time:F2} | GC0 : {run_Sequential.GC0:F1} , GC1 : {run_Sequential.GC1:F1} , GC2 : {run_Sequential.GC2:F1}");
+			Console.WriteLine($" Conditonal	: {run_Conditional.Elapsed_Time:F2}ms | Allocated_Memory : {run_Conditional.Allocated_Memory:F2} | AVG_Process_Time : {run_Conditional.AVG_Process_Time:F2}  | SecForProcess_Time : {run_Conditional.SecForProcess_Time:F2} | GC0 : {run_Conditional.GC0:F1} , GC1 : {run_Conditional.GC1:F1} , GC2 : {run_Conditional.GC2:F1}");
+			Console.WriteLine($" Random		: {run_Random.Elapsed_Time:F2}ms | Allocated_Memory : {run_Random.Allocated_Memory:F2} | AVG_Process_Time : {run_Random.AVG_Process_Time:F2}  | SecForProcess_Time : {run_Random.SecForProcess_Time:F2} | GC0 : {run_Random.GC0:F1} , GC1 : {run_Random.GC1:F1} , GC2 : {run_Random.GC2:F1}");
+			Console.WriteLine($" MultiComponent	: {run_MultiComponent.Elapsed_Time:F2}ms | Allocated_Memory : {run_MultiComponent.Allocated_Memory:F2} | AVG_Process_Time : {run_MultiComponent.AVG_Process_Time:F2}  | SecForProcess_Time : {run_MultiComponent.SecForProcess_Time:F2} | GC0 : {run_MultiComponent.GC0:F1} , GC1 : {run_MultiComponent.GC1:F1} , GC2 : {run_MultiComponent.GC2:F1}");
+			Console.WriteLine($" Caculation	: {run_Caculation.Elapsed_Time:F2}ms | Allocated_Memory : {run_Caculation.Allocated_Memory:F2} | AVG_Process_Time : {run_Caculation.AVG_Process_Time:F2}  | SecForProcess_Time : {run_Caculation.SecForProcess_Time:F2} | GC0 : {run_Caculation.GC0:F1} , GC1 : {run_Caculation.GC1:F1} , GC2 : {run_Caculation.GC2:F1}");
+			Console.WriteLine($"========================================================================================================================================================================================================================================================================================================================================================================================================");
+			Console.WriteLine("\n");
 		}
-		public static void OOP_ResultView(int repeatCount, InitTestResult[] init, RunTestResult[] run)
+		public static void OOP_ResultView(int repeatCount, InitTestResult[] init_Sequential, InitTestResult[] init_Conditional, InitTestResult[] init_Random, InitTestResult[] init_MultiComponent, InitTestResult[] init_Caculation,
+															RunTestResult[] run_Sequential, RunTestResult[] run_Conditional, RunTestResult[] run_Random, RunTestResult[] run_MultiComponent, RunTestResult[] run_Caculation)
 		{
 			for (int i = 0; i < repeatCount; i++)
 			{
 				Console.WriteLine($"=====================OOPTest_Init {i + 1}===================================");
-				Console.WriteLine($" Sequential	: {init[i].Elapsed_Time:F2}ms | Allocated_Memory : {init[i].Allocated_Memory:F2} | TimeToEntityCreate : {init[i].TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init[i].MemoryToEntityCreate:F2} | GC0 : {init[i].GC0:F1} , GC1 : {init[i].GC1:F1} , GC2 : {init[i].GC2:F1}");
+				Console.WriteLine($" Sequential	: {init_Sequential[i].Elapsed_Time:F2}ms | Allocated_Memory : {init_Sequential[i].Allocated_Memory:F2} | TimeToEntityCreate : {init_Sequential[i].TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Sequential[i].MemoryToEntityCreate:F2} | GC0 : {init_Sequential[i].GC0:F1} , GC1 : {init_Sequential[i].GC1:F1} , GC2 : {init_Sequential[i].GC2:F1}");
+				Console.WriteLine($" Conditonal	: {init_Conditional[i].Elapsed_Time:F2}ms | Allocated_Memory : {init_Conditional[i].Allocated_Memory:F2} | TimeToEntityCreate : {init_Conditional[i].TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Conditional[i].MemoryToEntityCreate:F2} | GC0 : {init_Conditional[i].GC0:F1} , GC1 : {init_Conditional[i].GC1:F1} , GC2 : {init_Conditional[i].GC2:F1}");
+				Console.WriteLine($" Random		: {init_Random[i].Elapsed_Time:F2}ms | Allocated_Memory : {init_Random[i].Allocated_Memory:F2} | TimeToEntityCreate : {init_Random[i].TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Random[i].MemoryToEntityCreate:F2} | GC0 : {init_Random[i].GC0:F1} , GC1 : {init_Random[i].GC1:F1} , GC2 : {init_Random[i].GC2:F1}");
+				Console.WriteLine($" MultiComponent	: {init_MultiComponent[i].Elapsed_Time:F2}ms | Allocated_Memory : {init_MultiComponent[i].Allocated_Memory:F2} | TimeToEntityCreate : {init_MultiComponent[i].TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_MultiComponent[i].MemoryToEntityCreate:F2} | GC0 : {init_MultiComponent[i].GC0:F1} , GC1 : {init_MultiComponent[i].GC1:F1} , GC2 : {init_MultiComponent[i].GC2:F1}");
+				Console.WriteLine($" Caculation	: {init_Caculation[i].Elapsed_Time:F2}ms | Allocated_Memory : {init_Caculation[i].Allocated_Memory:F2} | TimeToEntityCreate : {init_Caculation[i].TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Caculation[i].MemoryToEntityCreate:F2} | GC0 : {init_Caculation[i].GC0:F1} , GC1 : {init_Caculation[i].GC1:F1} , GC2 : {init_Caculation[i].GC2:F1}");
 				Console.WriteLine($"=====================OOPTest_Run {i + 1}===================================");
-				Console.WriteLine($" Sequential	: {run[i].Elapsed_Time:F2}ms | Allocated_Memory : {run[i].Allocated_Memory:F2} | AVG_Process_Time : {run[i].AVG_Process_Time:F2}  | SecForProcess_Time : {run[i].SecForProcess_Time:F2} | GC0 : {run[i].GC0:F1} , GC1 : {run[i].GC1:F1} , GC2 : {run[i].GC2:F1}");
+				Console.WriteLine($" Sequential	: {run_Sequential[i].Elapsed_Time:F2}ms | Allocated_Memory : {run_Sequential[i].Allocated_Memory:F2} | AVG_Process_Time : {run_Sequential[i].AVG_Process_Time:F2}  | SecForProcess_Time : {run_Sequential[i].SecForProcess_Time:F2}  | GC0 :  {run_Sequential[i].GC0:F1} , GC1 : {run_Sequential[i].GC1:F1} , GC2 : {run_Sequential[i].GC2:F1}");
+				Console.WriteLine($" Conditonal	: {run_Conditional[i].Elapsed_Time:F2}ms | Allocated_Memory : {run_Conditional[i].Allocated_Memory:F2} | AVG_Process_Time : {run_Conditional[i].AVG_Process_Time:F2}  | SecForProcess_Time : {run_Conditional[i].SecForProcess_Time:F2} | GC0 : {run_Conditional[i].GC0:F1} , GC1 : {run_Conditional[i].GC1:F1} , GC2 : {run_Conditional[i].GC2:F1}");
+				Console.WriteLine($" Random		: {run_Random[i].Elapsed_Time:F2}ms | Allocated_Memory : {run_Random[i].Allocated_Memory:F2} | AVG_Process_Time : {run_Random[i].AVG_Process_Time:F2}  | SecForProcess_Time : {run_Random[i].SecForProcess_Time:F2} | GC0 : {run_Random[i].GC0:F1} , GC1 : {run_Random[i].GC1:F1} , GC2 : {run_Random[i].GC2:F1}");
+				Console.WriteLine($" MultiComponent	: {run_MultiComponent[i].Elapsed_Time:F2}ms | Allocated_Memory : {run_MultiComponent[i].Allocated_Memory:F2} | AVG_Process_Time : {run_MultiComponent[i].AVG_Process_Time:F2}  | SecForProcess_Time : {run_MultiComponent[i].SecForProcess_Time:F2} | GC0 : {run_MultiComponent[i].GC0:F1} , GC1 : {run_MultiComponent[i].GC1:F1} , GC2 : {run_MultiComponent[i].GC2:F1}");
+				Console.WriteLine($" Caculation	: {run_Caculation[i].Elapsed_Time:F2}ms | Allocated_Memory : {run_Caculation[i].Allocated_Memory:F2} | AVG_Process_Time : {run_Caculation[i].AVG_Process_Time:F2}  | SecForProcess_Time : {run_Caculation[i].SecForProcess_Time:F2} | GC0 : {run_Caculation[i].GC0:F1} , GC1 : {run_Caculation[i].GC1:F1} , GC2 : {run_Caculation[i].GC2:F1}");
 				Console.WriteLine("\n");
 			}
 		}
-		public static void OOP_ResultAVGView(InitTestAVGResult init, RunTestAVGResult run)
+		public static void OOP_ResultAVGView(InitTestAVGResult init_Sequential, InitTestAVGResult init_Conditional, InitTestAVGResult init_Random, InitTestAVGResult init_MultiComponent, InitTestAVGResult init_Caculation,
+												RunTestAVGResult run_Sequential, RunTestAVGResult run_Conditional, RunTestAVGResult run_Random, RunTestAVGResult run_MultiComponent, RunTestAVGResult run_Caculation)
 		{
 			Console.WriteLine($"=====================OOPTest_Init_AVG ===================================");
-			Console.WriteLine($" Sequential	: {init.Elapsed_Time:F2}ms | Allocated_Memory : {init.Allocated_Memory:F2} | TimeToEntityCreate : {init.TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init.MemoryToEntityCreate:F2} | GC0 : {init.GC0:F1} , GC1 : {init.GC1:F1} , GC2 : {init.GC2:F1}");
+			Console.WriteLine($" Sequential	: {init_Sequential.Elapsed_Time:F2}ms | Allocated_Memory : {init_Sequential.Allocated_Memory:F2} | TimeToEntityCreate : {init_Sequential.TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Sequential.MemoryToEntityCreate:F2} | GC0 : {init_Sequential.GC0:F1} , GC1 : {init_Sequential.GC1:F1} , GC2 : {init_Sequential.GC2:F1}");
+			Console.WriteLine($" Conditonal	: {init_Conditional.Elapsed_Time:F2}ms | Allocated_Memory : {init_Conditional.Allocated_Memory:F2} | TimeToEntityCreate : {init_Conditional.TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Conditional.MemoryToEntityCreate:F2} | GC0 : {init_Conditional.GC0:F1} , GC1 : {init_Conditional.GC1:F1} , GC2 : {init_Conditional.GC2:F1}");
+			Console.WriteLine($" Random		: {init_Random.Elapsed_Time:F2}ms | Allocated_Memory : {init_Random.Allocated_Memory:F2} | TimeToEntityCreate : {init_Random.TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Random.MemoryToEntityCreate:F2} | GC0 : {init_Random.GC0:F1} , GC1 : {init_Random.GC1:F1} , GC2 : {init_Random.GC2:F1}");
+			Console.WriteLine($" MultiComponent	: {init_MultiComponent.Elapsed_Time:F2}ms | Allocated_Memory : {init_MultiComponent.Allocated_Memory:F2} | TimeToEntityCreate : {init_MultiComponent.TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_MultiComponent.MemoryToEntityCreate:F2} | GC0 : {init_MultiComponent.GC0:F1} , GC1 : {init_MultiComponent.GC1:F1} , GC2 : {init_MultiComponent.GC2:F1}");
+			Console.WriteLine($" Caculation	: {init_Caculation.Elapsed_Time:F2}ms | Allocated_Memory : {init_Caculation.Allocated_Memory:F2} | TimeToEntityCreate : {init_Caculation.TimeToEntityCreate:F2}  | MemoryToEntityCreate : {init_Caculation.MemoryToEntityCreate:F2} | GC0 : {init_Caculation.GC0:F1} , GC1 : {init_Caculation.GC1:F1} , GC2 : {init_Caculation.GC2:F1}");
 			Console.WriteLine($"=====================OOPTest_Run_AVG===================================");
-			Console.WriteLine($" Sequential	: {run.Elapsed_Time:F2}ms | Allocated_Memory : {run.Allocated_Memory:F2} | AVG_Process_Time : {run.AVG_Process_Time:F2}  | SecForProcess_Time : {run.SecForProcess_Time:F2} | GC0 : {run.GC0:F1} , GC1 : {run.GC1:F1} , GC2 : {run.GC2:F1}");
+			Console.WriteLine($" Sequential	: {run_Sequential.Elapsed_Time:F2}ms | Allocated_Memory : {run_Sequential.Allocated_Memory:F2} | AVG_Process_Time : {run_Sequential.AVG_Process_Time:F2}  | SecForProcess_Time : {run_Sequential.SecForProcess_Time:F2} | GC0 : {run_Sequential.GC0:F1} , GC1 : {run_Sequential.GC1:F1} , GC2 : {run_Sequential.GC2:F1}");
+			Console.WriteLine($" Conditonal	: {run_Conditional.Elapsed_Time:F2}ms | Allocated_Memory : {run_Conditional.Allocated_Memory:F2} | AVG_Process_Time : {run_Conditional.AVG_Process_Time:F2}  | SecForProcess_Time : {run_Conditional.SecForProcess_Time:F2} | GC0 : {run_Conditional.GC0:F1} , GC1 : {run_Conditional.GC1:F1} , GC2 : {run_Conditional.GC2:F1}");
+			Console.WriteLine($" Random		: {run_Random.Elapsed_Time:F2}ms | Allocated_Memory : {run_Random.Allocated_Memory:F2} | AVG_Process_Time : {run_Random.AVG_Process_Time:F2}  | SecForProcess_Time : {run_Random.SecForProcess_Time:F2} | GC0 : {run_Random.GC0:F1} , GC1 : {run_Random.GC1:F1} , GC2 : {run_Random.GC2:F1}");
+			Console.WriteLine($" MultiComponent	: {run_MultiComponent.Elapsed_Time:F2}ms | Allocated_Memory : {run_MultiComponent.Allocated_Memory:F2} | AVG_Process_Time : {run_MultiComponent.AVG_Process_Time:F2}  | SecForProcess_Time : {run_MultiComponent.SecForProcess_Time:F2} | GC0 : {run_MultiComponent.GC0:F1} , GC1 : {run_MultiComponent.GC1:F1} , GC2 : {run_MultiComponent.GC2:F1}");
+			Console.WriteLine($" Caculation	: {run_Caculation.Elapsed_Time:F2}ms | Allocated_Memory : {run_Caculation.Allocated_Memory:F2} | AVG_Process_Time : {run_Caculation.AVG_Process_Time:F2}  | SecForProcess_Time : {run_Caculation.SecForProcess_Time:F2} | GC0 : {run_Caculation.GC0:F1} , GC1 : {run_Caculation.GC1:F1} , GC2 : {run_Caculation.GC2:F1}");
+			Console.WriteLine($"========================================================================================================================================================================================================================================================================================================================================================================================================");
+			Console.WriteLine("\n");
 		}
 
 		public static void RepeatTest_Cycle(Type Itest,
@@ -269,7 +389,7 @@ namespace ECS_OOP_CompareTEST
 			return result;
 		}
 
-		public static RunTestResult SequentialTest(ITest testOBJ , int objCount)
+		public static RunTestResult SequentialTest(ITest testOBJ, int objCount)
 		{
 			RunTestResult result = new RunTestResult();
 			Stopwatch sw = new Stopwatch();
@@ -315,116 +435,297 @@ namespace ECS_OOP_CompareTEST
 
 			return result;
 		}
-
-
-
-
-
-		public static TestResult RunTest(ITest testTarget)
+		public static RunTestResult ConditionalTest(ITest testOBJ, int objCount)
 		{
-			int Objectcount = 100000;
-			int MaxRepeat = 10000;
-			int warmUpRepeat = 10;
-			//Stopwatch
+			RunTestResult result = new RunTestResult();
 			Stopwatch sw = new Stopwatch();
-			// Result
-			TestResult testResult = new TestResult();
+
+			int repeat = 100;
+
 			//GC
-			GC.Collect();
 			float GC0before;
 			float GC1before;
 			float GC2before;
 
 
-			//RunSequential
-			testTarget.Init(Objectcount);
-			for (int repeat = 0; repeat < warmUpRepeat; repeat++)
-				testTarget.RunSequential();
-
 			GC0before = GC.CollectionCount(0);
 			GC1before = GC.CollectionCount(1);
 			GC2before = GC.CollectionCount(2);
 
+			//Allocated Memory
+			long beforeAlloc = GC.GetAllocatedBytesForCurrentThread();
+
 			sw.Restart();
-			for (int repeat = 0; repeat < MaxRepeat; repeat++)
-				testTarget.RunSequential();
+			for (int i = 0; i < repeat; i++)
+				testOBJ.RunConditional();
 			sw.Stop();
-			testResult.Sequential_Time = sw.Elapsed.TotalMilliseconds;
-			testResult.GC0[0] = GC.CollectionCount(0) - GC0before;
-			testResult.GC1[0] = GC.CollectionCount(1) - GC1before;
-			testResult.GC2[0] = GC.CollectionCount(2) - GC2before;
 
+			//Allocated Memory
+			long afterAlloc = GC.GetAllocatedBytesForCurrentThread();
 
-			//RunConditional
-			testTarget.Init(Objectcount);
-			for (int repeat = 0; repeat < warmUpRepeat; repeat++)
-				testTarget.RunConditional();
+			result.Elapsed_Time = sw.Elapsed.TotalMilliseconds;
+			result.Allocated_Memory = afterAlloc - beforeAlloc;
+			result.GC0 = GC.CollectionCount(0) - GC0before;
+			result.GC1 = GC.CollectionCount(1) - GC1before;
+			result.GC2 = GC.CollectionCount(2) - GC2before;
+			//평균 처리 시간
+			// 작을수록 좋음
+			// CPU효율
+			// 단위 us
+			result.AVG_Process_Time = (result.Elapsed_Time * 1000.0) / (objCount * repeat);
+			//처리량
+			// 클수록 좋음
+			// 전체 처리 능력
+			// 단위 us
+			result.SecForProcess_Time = (objCount * repeat) / (result.Elapsed_Time / 1000.0);
 
-			GC0before = GC.CollectionCount(0);
-			GC1before = GC.CollectionCount(1);
-			GC2before = GC.CollectionCount(2);
-			sw.Restart();
-			for (int repeat = 0; repeat < MaxRepeat; repeat++)
-				testTarget.RunConditional();
-			sw.Stop();
-			testResult.Conditional_Time = sw.Elapsed.TotalMilliseconds;
-			testResult.GC0[1] = GC.CollectionCount(0) - GC0before;
-			testResult.GC1[1] = GC.CollectionCount(1) - GC1before;
-			testResult.GC2[1] = GC.CollectionCount(2) - GC2before;
-
-			//RunRandom
-			testTarget.Init(Objectcount);
-			for (int repeat = 0; repeat < warmUpRepeat; repeat++)
-				testTarget.RunRandom();
-
-			GC0before = GC.CollectionCount(0);
-			GC1before = GC.CollectionCount(1);
-			GC2before = GC.CollectionCount(2);
-			sw.Restart();
-			for (int repeat = 0; repeat < MaxRepeat; repeat++)
-				testTarget.RunRandom();
-			sw.Stop();
-			testResult.Random_Time = sw.Elapsed.TotalMilliseconds;
-			testResult.GC0[2] = GC.CollectionCount(0) - GC0before;
-			testResult.GC1[2] = GC.CollectionCount(1) - GC1before;
-			testResult.GC2[2] = GC.CollectionCount(2) - GC2before;
-
-			//RunMultiComponent
-			testTarget.Init(Objectcount);
-			for (int repeat = 0; repeat < warmUpRepeat; repeat++)
-				testTarget.RunMultiComponent();
-
-			GC0before = GC.CollectionCount(0);
-			GC1before = GC.CollectionCount(1);
-			GC2before = GC.CollectionCount(2);
-			sw.Restart();
-			for (int repeat = 0; repeat < MaxRepeat; repeat++)
-				testTarget.RunMultiComponent();
-			sw.Stop();
-			testResult.MultiComponent_Time = sw.Elapsed.TotalMilliseconds;
-			testResult.GC0[3] = GC.CollectionCount(0) - GC0before;
-			testResult.GC1[3] = GC.CollectionCount(1) - GC1before;
-			testResult.GC2[3] = GC.CollectionCount(2) - GC2before;
-
-			//RunCalculation
-			testTarget.Init(Objectcount);
-			for (int repeat = 0; repeat < warmUpRepeat; repeat++)
-				testTarget.RunCalculation();
-
-			GC0before = GC.CollectionCount(0);
-			GC1before = GC.CollectionCount(1);
-			GC2before = GC.CollectionCount(2);
-			sw.Restart();
-			for (int repeat = 0; repeat < MaxRepeat; repeat++)
-				testTarget.RunCalculation();
-			sw.Stop();
-			testResult.Calculation_Time = sw.Elapsed.TotalMilliseconds;
-			testResult.GC0[4] = GC.CollectionCount(0) - GC0before;
-			testResult.GC1[4] = GC.CollectionCount(1) - GC1before;
-			testResult.GC2[4] = GC.CollectionCount(2) - GC2before;
-
-			return testResult;
+			return result;
 		}
+		public static RunTestResult RandomTest(ITest testOBJ, int objCount)
+		{
+			RunTestResult result = new RunTestResult();
+			Stopwatch sw = new Stopwatch();
+
+			int repeat = 100;
+
+			//GC
+			float GC0before;
+			float GC1before;
+			float GC2before;
+
+
+			GC0before = GC.CollectionCount(0);
+			GC1before = GC.CollectionCount(1);
+			GC2before = GC.CollectionCount(2);
+
+			//Allocated Memory
+			long beforeAlloc = GC.GetAllocatedBytesForCurrentThread();
+
+			sw.Restart();
+			for (int i = 0; i < repeat; i++)
+				testOBJ.RunRandom();
+			sw.Stop();
+
+			//Allocated Memory
+			long afterAlloc = GC.GetAllocatedBytesForCurrentThread();
+
+			result.Elapsed_Time = sw.Elapsed.TotalMilliseconds;
+			result.Allocated_Memory = afterAlloc - beforeAlloc;
+			result.GC0 = GC.CollectionCount(0) - GC0before;
+			result.GC1 = GC.CollectionCount(1) - GC1before;
+			result.GC2 = GC.CollectionCount(2) - GC2before;
+			//평균 처리 시간
+			// 작을수록 좋음
+			// CPU효율
+			// 단위 us
+			result.AVG_Process_Time = (result.Elapsed_Time * 1000.0) / (objCount * repeat);
+			//처리량
+			// 클수록 좋음
+			// 전체 처리 능력
+			// 단위 us
+			result.SecForProcess_Time = (objCount * repeat) / (result.Elapsed_Time / 1000.0);
+
+			return result;
+		}
+		public static RunTestResult MultiComponentTest(ITest testOBJ, int objCount)
+		{
+			RunTestResult result = new RunTestResult();
+			Stopwatch sw = new Stopwatch();
+
+			int repeat = 100;
+
+			//GC
+			float GC0before;
+			float GC1before;
+			float GC2before;
+
+
+			GC0before = GC.CollectionCount(0);
+			GC1before = GC.CollectionCount(1);
+			GC2before = GC.CollectionCount(2);
+
+			//Allocated Memory
+			long beforeAlloc = GC.GetAllocatedBytesForCurrentThread();
+
+			sw.Restart();
+			for (int i = 0; i < repeat; i++)
+				testOBJ.RunMultiComponent();
+			sw.Stop();
+
+			//Allocated Memory
+			long afterAlloc = GC.GetAllocatedBytesForCurrentThread();
+
+			result.Elapsed_Time = sw.Elapsed.TotalMilliseconds;
+			result.Allocated_Memory = afterAlloc - beforeAlloc;
+			result.GC0 = GC.CollectionCount(0) - GC0before;
+			result.GC1 = GC.CollectionCount(1) - GC1before;
+			result.GC2 = GC.CollectionCount(2) - GC2before;
+			//평균 처리 시간
+			// 작을수록 좋음
+			// CPU효율
+			// 단위 us
+			result.AVG_Process_Time = (result.Elapsed_Time * 1000.0) / (objCount * repeat);
+			//처리량
+			// 클수록 좋음
+			// 전체 처리 능력
+			// 단위 us
+			result.SecForProcess_Time = (objCount * repeat) / (result.Elapsed_Time / 1000.0);
+
+			return result;
+		}
+		public static RunTestResult CalculationTest(ITest testOBJ, int objCount)
+		{
+			RunTestResult result = new RunTestResult();
+			Stopwatch sw = new Stopwatch();
+
+			int repeat = 100;
+
+			//GC
+			float GC0before;
+			float GC1before;
+			float GC2before;
+
+
+			GC0before = GC.CollectionCount(0);
+			GC1before = GC.CollectionCount(1);
+			GC2before = GC.CollectionCount(2);
+
+			//Allocated Memory
+			long beforeAlloc = GC.GetAllocatedBytesForCurrentThread();
+
+			sw.Restart();
+			for (int i = 0; i < repeat; i++)
+				testOBJ.RunCalculation();
+			sw.Stop();
+
+			//Allocated Memory
+			long afterAlloc = GC.GetAllocatedBytesForCurrentThread();
+
+			result.Elapsed_Time = sw.Elapsed.TotalMilliseconds;
+			result.Allocated_Memory = afterAlloc - beforeAlloc;
+			result.GC0 = GC.CollectionCount(0) - GC0before;
+			result.GC1 = GC.CollectionCount(1) - GC1before;
+			result.GC2 = GC.CollectionCount(2) - GC2before;
+			//평균 처리 시간
+			// 작을수록 좋음
+			// CPU효율
+			// 단위 us
+			result.AVG_Process_Time = (result.Elapsed_Time * 1000.0) / (objCount * repeat);
+			//처리량
+			// 클수록 좋음
+			// 전체 처리 능력
+			// 단위 us
+			result.SecForProcess_Time = (objCount * repeat) / (result.Elapsed_Time / 1000.0);
+
+			return result;
+		}
+
+
+		//public static TestResult RunTest(ITest testTarget)
+		//{
+		//	int Objectcount = 100000;
+		//	int MaxRepeat = 10000;
+		//	int warmUpRepeat = 10;
+		//	//Stopwatch
+		//	Stopwatch sw = new Stopwatch();
+		//	// Result
+		//	TestResult testResult = new TestResult();
+		//	//GC
+		//	GC.Collect();
+		//	float GC0before;
+		//	float GC1before;
+		//	float GC2before;
+
+
+		//	//RunSequential
+		//	testTarget.Init(Objectcount);
+		//	for (int repeat = 0; repeat < warmUpRepeat; repeat++)
+		//		testTarget.RunSequential();
+
+		//	GC0before = GC.CollectionCount(0);
+		//	GC1before = GC.CollectionCount(1);
+		//	GC2before = GC.CollectionCount(2);
+
+		//	sw.Restart();
+		//	for (int repeat = 0; repeat < MaxRepeat; repeat++)
+		//		testTarget.RunSequential();
+		//	sw.Stop();
+		//	testResult.Sequential_Time = sw.Elapsed.TotalMilliseconds;
+		//	testResult.GC0[0] = GC.CollectionCount(0) - GC0before;
+		//	testResult.GC1[0] = GC.CollectionCount(1) - GC1before;
+		//	testResult.GC2[0] = GC.CollectionCount(2) - GC2before;
+
+
+		//	//RunConditional
+		//	testTarget.Init(Objectcount);
+		//	for (int repeat = 0; repeat < warmUpRepeat; repeat++)
+		//		testTarget.RunConditional();
+
+		//	GC0before = GC.CollectionCount(0);
+		//	GC1before = GC.CollectionCount(1);
+		//	GC2before = GC.CollectionCount(2);
+		//	sw.Restart();
+		//	for (int repeat = 0; repeat < MaxRepeat; repeat++)
+		//		testTarget.RunConditional();
+		//	sw.Stop();
+		//	testResult.Conditional_Time = sw.Elapsed.TotalMilliseconds;
+		//	testResult.GC0[1] = GC.CollectionCount(0) - GC0before;
+		//	testResult.GC1[1] = GC.CollectionCount(1) - GC1before;
+		//	testResult.GC2[1] = GC.CollectionCount(2) - GC2before;
+
+		//	//RunRandom
+		//	testTarget.Init(Objectcount);
+		//	for (int repeat = 0; repeat < warmUpRepeat; repeat++)
+		//		testTarget.RunRandom();
+
+		//	GC0before = GC.CollectionCount(0);
+		//	GC1before = GC.CollectionCount(1);
+		//	GC2before = GC.CollectionCount(2);
+		//	sw.Restart();
+		//	for (int repeat = 0; repeat < MaxRepeat; repeat++)
+		//		testTarget.RunRandom();
+		//	sw.Stop();
+		//	testResult.Random_Time = sw.Elapsed.TotalMilliseconds;
+		//	testResult.GC0[2] = GC.CollectionCount(0) - GC0before;
+		//	testResult.GC1[2] = GC.CollectionCount(1) - GC1before;
+		//	testResult.GC2[2] = GC.CollectionCount(2) - GC2before;
+
+		//	//RunMultiComponent
+		//	testTarget.Init(Objectcount);
+		//	for (int repeat = 0; repeat < warmUpRepeat; repeat++)
+		//		testTarget.RunMultiComponent();
+
+		//	GC0before = GC.CollectionCount(0);
+		//	GC1before = GC.CollectionCount(1);
+		//	GC2before = GC.CollectionCount(2);
+		//	sw.Restart();
+		//	for (int repeat = 0; repeat < MaxRepeat; repeat++)
+		//		testTarget.RunMultiComponent();
+		//	sw.Stop();
+		//	testResult.MultiComponent_Time = sw.Elapsed.TotalMilliseconds;
+		//	testResult.GC0[3] = GC.CollectionCount(0) - GC0before;
+		//	testResult.GC1[3] = GC.CollectionCount(1) - GC1before;
+		//	testResult.GC2[3] = GC.CollectionCount(2) - GC2before;
+
+		//	//RunCalculation
+		//	testTarget.Init(Objectcount);
+		//	for (int repeat = 0; repeat < warmUpRepeat; repeat++)
+		//		testTarget.RunCalculation();
+
+		//	GC0before = GC.CollectionCount(0);
+		//	GC1before = GC.CollectionCount(1);
+		//	GC2before = GC.CollectionCount(2);
+		//	sw.Restart();
+		//	for (int repeat = 0; repeat < MaxRepeat; repeat++)
+		//		testTarget.RunCalculation();
+		//	sw.Stop();
+		//	testResult.Calculation_Time = sw.Elapsed.TotalMilliseconds;
+		//	testResult.GC0[4] = GC.CollectionCount(0) - GC0before;
+		//	testResult.GC1[4] = GC.CollectionCount(1) - GC1before;
+		//	testResult.GC2[4] = GC.CollectionCount(2) - GC2before;
+
+		//	return testResult;
+		//}
 
 
 

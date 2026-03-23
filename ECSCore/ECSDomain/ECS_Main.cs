@@ -9,14 +9,20 @@ namespace ECS_OOP_CompareTEST
 {
 	internal class ECS_Main : ITest
 	{
-		public ECSManager ECSCore = new ECSManager();
-		public Entity[] Entitys;
 		float value = 1f;
 		int InitCount;
 
+		Random rand = new Random();
+		public ECSManager ECSCore = new ECSManager();
+		public Entity[] Entitys;
+		public int[] RandomIndexs;
+
 		// TEST Class
 		SequentialTestSystem_ECS sequential = new SequentialTestSystem_ECS();
-
+		ConditionalTestSystem_OOP conditional = new ConditionalTestSystem_OOP();
+		RandomTestSystem_OOP random = new RandomTestSystem_OOP();
+		MultiComponentTestSystem_OOP multiComponent = new MultiComponentTestSystem_OOP();
+		CaculationTestSystem_OOP caculation = new CaculationTestSystem_OOP();
 
 		public void Init(int EntityCount)
 		{
@@ -50,7 +56,8 @@ namespace ECS_OOP_CompareTEST
 				ECSCore.Get<VelocityYComponent>(Entitys[entityIndex]).value = value;
 				ECSCore.Get<VelocityZComponent>(Entitys[entityIndex]).value = value;
 				ECSCore.Get<ActiveComponent>(Entitys[entityIndex]).Is = true;
-				
+
+				RandomIndexs = new int[EntityCount];
 			}
 			if(ECSCore.Get<PositionXComponent>(Entitys[^1]).value != value)
 			{
