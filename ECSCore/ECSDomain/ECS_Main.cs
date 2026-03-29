@@ -12,19 +12,23 @@ namespace ECS_OOP_CompareTEST
 		float value = 1f;
 		int InitCount;
 
-		Random rand = new Random();
+		Random rand = new Random(1000);
 		public ECSManager ECSCore = new ECSManager();
 		public Entity[] Entitys;
-		public int[] RandomIndexs;
 
 		// TEST Class
 		SequentialTestSystem_ECS sequential = new SequentialTestSystem_ECS();
-		ConditionalTestSystem_OOP conditional = new ConditionalTestSystem_OOP();
-		RandomTestSystem_OOP random = new RandomTestSystem_OOP();
-		MultiComponentTestSystem_OOP multiComponent = new MultiComponentTestSystem_OOP();
-		CaculationTestSystem_OOP caculation = new CaculationTestSystem_OOP();
+		ConditionalTestSystem_ECS conditional = new ConditionalTestSystem_ECS();
+		RandomTestSystem_ECS random = new RandomTestSystem_ECS();
+		MultiComponentTestSystem_ECS multiComponent = new MultiComponentTestSystem_ECS();
+		CaculationTestSystem_ECS caculation = new CaculationTestSystem_ECS();
 
-		public void Init(int EntityCount)
+		EntityQuery[] query = new EntityQuery[5]; 
+
+
+
+
+		public void Init(int EntityCount , Testcase test)
 		{
 			InitCount = EntityCount;
 			ComponentSetting.SetComponent(typeof(PositionXComponent),
@@ -33,63 +37,99 @@ namespace ECS_OOP_CompareTEST
 											typeof(VelocityXComponent),
 											typeof(VelocityYComponent),
 											typeof(VelocityZComponent),
-											typeof(ActiveComponent));
+											typeof(ActiveComponent),
+											typeof(DummyComponent));
+
+			Entitys = new Entity[InitCount];
+
+			for (int i = 0; i < InitCount; i++)
+			{
+				bool active = rand.Next(2) == 1;
+				bool hasPos = rand.Next(2) == 1;
+				bool hasVel = rand.Next(2) == 1;
+
+				if(active)
+				{
+					if (hasPos && hasVel)
+					{
+						Entitys[i] = ECSCore.CreateEntity(typeof(ActiveComponent),
+															typeof(PositionXComponent),
+															typeof(PositionYComponent),
+															typeof(PositionZComponent),
+															typeof(VelocityXComponent),
+															typeof(VelocityYComponent),
+															typeof(VelocityZComponent));
+					}
+					else if (hasPos) 
+					{
+						Entitys[i] = ECSCore.CreateEntity(	typeof(ActiveComponent),
+															typeof(PositionXComponent),
+															typeof(PositionYComponent),
+															typeof(PositionZComponent));
+					}
+					else if (hasVel) 
+					{
+						Entitys[i] = ECSCore.CreateEntity(typeof(ActiveComponent),
+																typeof(VelocityXComponent),
+																typeof(VelocityYComponent),
+																typeof(VelocityZComponent));
+					}
+					
+					else
+					{
+						Entitys[i] = ECSCore.CreateEntity(	typeof(ActiveComponent),
+															typeof(DummyComponent));					
+					}
+				}
+				else
+				{
+					Entitys[i] = ECSCore.CreateEntity(typeof(DummyComponent));
+				}
+
+				ECSCore.Init(Entitys[i]);
+
+			}
+			Query_Filter_1 = ecsMG.Query()
+				.WithAll<PositionXComponent, VelocityXComponent>()
+				.WithNone<NeedInit>()
+				.Build();
+			query[0] = ECSCore.Query()
+				.WithAll<>()
+				.WithNone<>()
+				.WithAny<>();
 											
 
-			Entitys = new Entity[EntityCount];
+			
 
-			for (int entityIndex = 0; entityIndex < EntityCount; entityIndex++)
+			
+			switch (test)
 			{
-				Entitys[entityIndex] = ECSCore.CreateEntity(typeof(PositionXComponent),
-										typeof(PositionYComponent),
-										typeof(PositionZComponent),
-										typeof(VelocityXComponent),
-										typeof(VelocityYComponent),
-										typeof(VelocityZComponent),
-										typeof(ActiveComponent));
-				ECSCore.Init(Entitys[entityIndex]);
+				case Testcase.SEQUENTIAL:
+					sequential.Set(ECSCore);
+					break;
+				case Testcase.CONDITIONAL:
+					conditional.Set(ECSCore);
+					break;
+				case Testcase.RANDOM:
+					random.Set(ECSCore);
+					break;
+				case Testcase.MULTICOMPONENT:
+					multiComponent.Set(ECSCore);
+					break;
+				case Testcase.CACULATION:
+					caculation.Set(ECSCore);
+					break;
+				default:
+					break;
 
-				ECSCore.Get<PositionXComponent>(Entitys[entityIndex]).value = value;
-				ECSCore.Get<PositionYComponent>(Entitys[entityIndex]).value = value;
-				ECSCore.Get<PositionZComponent>(Entitys[entityIndex]).value = value;
-				ECSCore.Get<VelocityXComponent>(Entitys[entityIndex]).value = value;
-				ECSCore.Get<VelocityYComponent>(Entitys[entityIndex]).value = value;
-				ECSCore.Get<VelocityZComponent>(Entitys[entityIndex]).value = value;
-				ECSCore.Get<ActiveComponent>(Entitys[entityIndex]).Is = true;
-
-				RandomIndexs = new int[EntityCount];
 			}
-			if(ECSCore.Get<PositionXComponent>(Entitys[^1]).value != value)
-			{
-				throw new InvalidDataException("do Not Include Data PositionXComponent");
-			}
-			if (ECSCore.Get<PositionYComponent>(Entitys[^1]).value != value)
-			{
-				throw new InvalidDataException("do Not Include Data PositionYComponent");
-			}
-			if (ECSCore.Get<PositionZComponent>(Entitys[^1]).value != value)
-			{
-				throw new InvalidDataException("do Not Include Data PositionZComponent");
-			}
-			if (ECSCore.Get<VelocityXComponent>(Entitys[^1]).value != value)
-			{
-				throw new InvalidDataException("do Not Include Data VelocityXComponent");
-			}
-			if (ECSCore.Get<VelocityYComponent>(Entitys[^1]).value != value)
-			{
-				throw new InvalidDataException("do Not Include Data VelocityYComponent");
-			}
-			if (ECSCore.Get<VelocityZComponent>(Entitys[^1]).value != value)
-			{
-				throw new InvalidDataException("do Not Include Data VelocityZComponent");
-			}
-			sequential.Set(ECSCore);
 		}
-		
-		public void RunSequential()
-		{
-			sequential.OnUpdate(ECSCore);
-		}
+
+		public void RunSequential() => sequential.OnUpdate(ECSCore);
+		public void RunConditional() => conditional.OnUpdate(ECSCore);
+		public void RunRandom() => random.OnUpdate(ECSCore);
+		public void RunMultiComponent() => multiComponent.OnUpdate(ECSCore);
+		public void RunCalculation() => caculation.OnUpdate(ECSCore);
 		//public void RunSequential()
 		//{
 		//	int[] _PosTypeIndex;
@@ -144,10 +184,7 @@ namespace ECS_OOP_CompareTEST
 		//		archetypeIndex2++;
 		//	}
 		//}
-		public void RunConditional() { }
-		public void RunRandom() { }
-		public void RunMultiComponent() { }
-		public void RunCalculation() { }
+
 
 
 	}

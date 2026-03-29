@@ -10,6 +10,17 @@ using System.Threading.Tasks;
 
 namespace ECS_OOP_CompareTEST
 {
+	public enum Testcase
+	{ 
+		SEQUENTIAL,
+		CONDITIONAL,
+		RANDOM,
+		MULTICOMPONENT,
+		CACULATION
+	}
+
+
+
 	internal class MainTest
 	{
 		public static void Main()
@@ -45,6 +56,9 @@ namespace ECS_OOP_CompareTEST
 			RunTestAVGResult MultiComponent_Run_AVG = new RunTestAVGResult();
 			RunTestAVGResult Calculation_Run_AVG = new RunTestAVGResult();
 
+
+			// ECS
+			#region ECSTEST
 			// 테스트를 위한 임시 초기화
 			for(int i = 0; i < RepeatCount ; i++)
 			{
@@ -60,16 +74,23 @@ namespace ECS_OOP_CompareTEST
 				MultiComponent_Run[i] = new();
 				Calculation_Run[i] = new();
 			}
+			Sequential_Init_AVG = new();
+			Conditional_Init_AVG = new();
+			Random_Init_AVG = new();
+			MultiComponent_Init_AVG = new();
+			Calculation_Init_AVG = new();
 
+			Sequential_Run_AVG = new();
+			Conditional_Run_AVG = new();
+			Random_Run_AVG = new();
+			MultiComponent_Run_AVG = new();
+			Calculation_Run_AVG = new();
 
-
-			// ECS
-			#region ECSTEST
 			RepeatTest_Cycle(typeof(ECS_Main),
 								Objectcount,
 								RepeatCount,
 								warmup,
-								obj => InitTest((ECS_Main)obj, Objectcount),
+								obj => InitTest((ECS_Main)obj , Testcase.SEQUENTIAL , Objectcount),
 								obj => SequentialTest((ECS_Main)obj, Objectcount),
 								out InitTestResult[] ECS_init_SequentialResults,
 								out RunTestResult[] ECS_run_SequentialResults);
@@ -104,12 +125,38 @@ namespace ECS_OOP_CompareTEST
 			#endregion
 
 			#region OOPTEST
+			// 테스트를 위한 임시 초기화
+			for (int i = 0; i < RepeatCount; i++)
+			{
+				Sequential_Init[i] = new();
+				Conditional_Init[i] = new();
+				Random_Init[i] = new();
+				MultiComponent_Init[i] = new();
+				Calculation_Init[i] = new();
+
+				Sequential_Run[i] = new();
+				Conditional_Run[i] = new();
+				Random_Run[i] = new();
+				MultiComponent_Run[i] = new();
+				Calculation_Run[i] = new();
+			}
+			Sequential_Init_AVG = new();
+			Conditional_Init_AVG = new();
+			Random_Init_AVG = new();
+			MultiComponent_Init_AVG = new();
+			Calculation_Init_AVG = new();
+
+			Sequential_Run_AVG = new();
+			Conditional_Run_AVG = new();
+			Random_Run_AVG = new();
+			MultiComponent_Run_AVG = new();
+			Calculation_Run_AVG = new();
 			//SequentialTest
 			RepeatTest_Cycle(typeof(OOP_Main),
 								Objectcount,
 								RepeatCount,
 								warmup,
-								obj => InitTest((OOP_Main)obj, Objectcount),
+								obj => InitTest((OOP_Main)obj ,Testcase.SEQUENTIAL , Objectcount),
 								obj => SequentialTest((OOP_Main)obj, Objectcount),
 								out InitTestResult[] OOP_init_SequentialResults,
 								out RunTestResult[] OOP_run_SequentialResults);
@@ -122,7 +169,7 @@ namespace ECS_OOP_CompareTEST
 								Objectcount,
 								RepeatCount,
 								warmup,
-								obj => InitTest((OOP_Main)obj, Objectcount),
+								obj => InitTest((OOP_Main)obj,Testcase.CONDITIONAL , Objectcount),
 								obj => ConditionalTest((OOP_Main)obj, Objectcount),
 								out InitTestResult[] OOP_init_ConditionalResults,
 								out RunTestResult[] OOP_run_ConditionalResults);
@@ -135,7 +182,7 @@ namespace ECS_OOP_CompareTEST
 								Objectcount,
 								RepeatCount,
 								warmup,
-								obj => InitTest((OOP_Main)obj, Objectcount),
+								obj => InitTest((OOP_Main)obj, Testcase.RANDOM, Objectcount),
 								obj => RandomTest((OOP_Main)obj, Objectcount),
 								out InitTestResult[] OOP_init_RandomResults,
 								out RunTestResult[] OOP_run_RandomResults);
@@ -144,31 +191,31 @@ namespace ECS_OOP_CompareTEST
 			Random_Init_AVG.AVGCaculatorForResult(Random_Init);
 			Random_Run_AVG.AVGCaculatorForResult(Random_Run);
 			//MultiComponentTest
-			//RepeatTest_Cycle(typeof(OOP_Main),
-			//					Objectcount,
-			//					RepeatCount,
-			//					warmup,
-			//					obj => InitTest((OOP_Main)obj, Objectcount),
-			//					obj => MultiComponentTest((OOP_Main)obj, Objectcount),
-			//					out InitTestResult[] OOP_init_MultiComponentResults,
-			//					out RunTestResult[] OOP_run_MultiComponentResults);
-			//MultiComponent_Init = OOP_init_MultiComponentResults;
-			//MultiComponent_Run = OOP_run_MultiComponentResults;
-			//MultiComponent_Init_AVG.AVGCaculatorForResult(MultiComponent_Init);
-			//MultiComponent_Run_AVG.AVGCaculatorForResult(MultiComponent_Run);
-			// CaculationTest
-			//RepeatTest_Cycle(typeof(OOP_Main),
-			//					Objectcount,
-			//					RepeatCount,
-			//					warmup,
-			//					obj => InitTest((OOP_Main)obj, Objectcount),
-			//					obj => CalculationTest((OOP_Main)obj, Objectcount),
-			//					out InitTestResult[] OOP_init_CalculationResults,
-			//					out RunTestResult[] OOP_run_CalculationResults);
-			//Calculation_Init = OOP_init_CalculationResults;
-			//Calculation_Run = OOP_run_CalculationResults;
-			//Calculation_Init_AVG.AVGCaculatorForResult(Calculation_Init);
-			//Calculation_Run_AVG.AVGCaculatorForResult(Calculation_Run);
+			RepeatTest_Cycle(typeof(OOP_Main),
+								Objectcount,
+								RepeatCount,
+								warmup,
+								obj => InitTest((OOP_Main)obj, Testcase.MULTICOMPONENT,  Objectcount),
+								obj => MultiComponentTest((OOP_Main)obj, Objectcount),
+								out InitTestResult[] OOP_init_MultiComponentResults,
+								out RunTestResult[] OOP_run_MultiComponentResults);
+			MultiComponent_Init = OOP_init_MultiComponentResults;
+			MultiComponent_Run = OOP_run_MultiComponentResults;
+			MultiComponent_Init_AVG.AVGCaculatorForResult(MultiComponent_Init);
+			MultiComponent_Run_AVG.AVGCaculatorForResult(MultiComponent_Run);
+			//CaculationTest
+			RepeatTest_Cycle(typeof(OOP_Main),
+								Objectcount,
+								RepeatCount,
+								warmup,
+								obj => InitTest((OOP_Main)obj,Testcase.CACULATION, Objectcount),
+								obj => CalculationTest((OOP_Main)obj, Objectcount),
+								out InitTestResult[] OOP_init_CalculationResults,
+								out RunTestResult[] OOP_run_CalculationResults);
+			Calculation_Init = OOP_init_CalculationResults;
+			Calculation_Run = OOP_run_CalculationResults;
+			Calculation_Init_AVG.AVGCaculatorForResult(Calculation_Init);
+			Calculation_Run_AVG.AVGCaculatorForResult(Calculation_Run);
 
 
 			OOP_ResultView(RepeatCount, Sequential_Init, Conditional_Init, Random_Init, MultiComponent_Init, Calculation_Init,
@@ -350,7 +397,7 @@ namespace ECS_OOP_CompareTEST
 				run_results[i] = run(Real_OBJ);
 			}
 		}
-		public static InitTestResult InitTest(ITest testOBJ, int objCount)
+		public static InitTestResult InitTest(ITest testOBJ, Testcase test ,int objCount)
 		{
 			InitTestResult result = new InitTestResult();
 			// Elapsed Time
@@ -362,7 +409,6 @@ namespace ECS_OOP_CompareTEST
 			float GC1before;
 			float GC2before;
 
-
 			GC0before = GC.CollectionCount(0);
 			GC1before = GC.CollectionCount(1);
 			GC2before = GC.CollectionCount(2);
@@ -371,7 +417,7 @@ namespace ECS_OOP_CompareTEST
 			long beforeAlloc = GC.GetAllocatedBytesForCurrentThread();
 
 			sw.Restart();
-			testOBJ.Init(objCount);
+			testOBJ.Init(objCount,test);
 			sw.Stop();
 
 			//Allocated Memory

@@ -8,16 +8,22 @@ namespace ECS_OOP_CompareTEST
 {
 	internal class ConditionalTestSystem_OOP : IObject
 	{
+		Random rand = new Random(1000);
 		public void Set(OOPObejct[] oopObjects)
 		{
-
+			for (int i = 0; i < oopObjects.Length; i++)
+			{
+				oopObjects[i].IsActive = true;
+				oopObjects[i].HasPos = true;
+				oopObjects[i].HasVel = (i % 2 == 0 );
+			}
 		}
 		public void OnUpdate(OOPObejct[] oopObjects)
 		{
 			for (int i = 0; i < oopObjects.Length; i++)
 			{
 				var obj = oopObjects[i];
-				if (obj.IsActive)
+				if (obj.IsActive && obj.HasPos && obj.HasVel)
 				{
 					obj.PositionX = obj.PositionX + (obj.VelocityX * 2.5f);
 					obj.PositionY = obj.PositionY + (obj.VelocityY * 2.5f);

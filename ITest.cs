@@ -8,7 +8,7 @@ namespace ECS_OOP_CompareTEST
 {
 	internal interface ITest
 	{
-		public void Init(int objectCount);
+		public void Init(int objectCount , Testcase test);
 		public void RunSequential();
 		public void RunConditional();
 		public void RunRandom();

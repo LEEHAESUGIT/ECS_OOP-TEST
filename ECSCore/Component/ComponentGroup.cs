@@ -45,5 +45,7 @@ namespace ECSCore
 	{
 		public bool Is;
 	}
-	
+	public struct DummyComponent : IComponentData
+	{
+	}
 }

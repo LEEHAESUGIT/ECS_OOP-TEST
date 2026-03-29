@@ -9,9 +9,15 @@ namespace ECS_OOP_CompareTEST
 {
 	internal class SequentialTestSystem_OOP : IObject
 	{
+		Random rand = new Random(1000);
 		public void Set(OOPObejct[] oopObjects)
 		{
-
+			for (int i = 0; i < oopObjects.Length; i++)
+			{
+				oopObjects[i].IsActive = true;
+				oopObjects[i].HasPos = true;
+				oopObjects[i].HasVel = true;
+			}
 		}
 
 		public void OnUpdate(OOPObejct[] oopObjects)
@@ -19,9 +25,10 @@ namespace ECS_OOP_CompareTEST
 			for (int i = 0; i < oopObjects.Length; i++)
 			{
 				var obj = oopObjects[i];
-				obj.PositionX += obj.VelocityX;
-				obj.PositionY += obj.VelocityY;
-				obj.PositionZ += obj.VelocityZ;
+				if (obj.IsActive && obj.HasPos && obj.HasVel)
+				{
+					obj.PositionX += obj.VelocityX;
+				}
 			}
 		}
 

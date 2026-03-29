@@ -8,13 +8,16 @@ namespace ECS_OOP_CompareTEST
 {
 	internal class RandomTestSystem_OOP : IObject
 	{
-		Random rand = new Random();
+		Random rand = new Random(1000);
 		public int[] RandomIndexs;
 		public void Set(OOPObejct[] oopObjects)
 		{
 			RandomIndexs = new int[oopObjects.Length];
 			for(int i = 0 ; i < oopObjects.Length ; i++)
 			{
+				oopObjects[i].IsActive = rand.Next(2) == 1;
+				oopObjects[i].HasPos = rand.Next(2) == 1;
+				oopObjects[i].HasVel = rand.Next(2) == 1;
 				RandomIndexs[i] = i;
 			}
 			shuffle(RandomIndexs);
@@ -24,11 +27,12 @@ namespace ECS_OOP_CompareTEST
 			for (int i = 0; i < oopObjects.Length; i++)
 			{
 				var obj = oopObjects[RandomIndexs[i]];
-
-				obj.PositionX += obj.VelocityX;
-				obj.PositionY -= obj.VelocityY;
-				obj.PositionZ *= obj.VelocityZ;
-
+				if (obj.IsActive && obj.HasPos && obj.HasVel)
+				{
+					obj.PositionX += obj.VelocityX;
+					obj.PositionY -= obj.VelocityY;
+					obj.PositionZ *= obj.VelocityZ;
+				}
 			}
 		}
 		public void shuffle(int[] randIndexs)
