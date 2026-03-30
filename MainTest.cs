@@ -43,24 +43,36 @@ namespace ECS_OOP_CompareTEST
 			RunTestResult[] MultiComponent_Run = new RunTestResult[RepeatCount];
 			RunTestResult[] Calculation_Run = new RunTestResult[RepeatCount];
 
+			// AVG for ECS
 			// 반복테스트의 평균값 저장 - Init
-			InitTestAVGResult Sequential_Init_AVG = new InitTestAVGResult();
-			InitTestAVGResult Conditional_Init_AVG = new InitTestAVGResult();
-			InitTestAVGResult Random_Init_AVG = new InitTestAVGResult();
-			InitTestAVGResult MultiComponent_Init_AVG = new InitTestAVGResult();
-			InitTestAVGResult Calculation_Init_AVG = new InitTestAVGResult();
+			InitTestAVGResult ECS_Sequential_Init_AVG = new InitTestAVGResult();
+			InitTestAVGResult ECS_Conditional_Init_AVG = new InitTestAVGResult();
+			InitTestAVGResult ECS_Random_Init_AVG = new InitTestAVGResult();
+			InitTestAVGResult ECS_MultiComponent_Init_AVG = new InitTestAVGResult();
+			InitTestAVGResult ECS_Calculation_Init_AVG = new InitTestAVGResult();
 			// 반복테스트의 평균값 저장 - Run
-			RunTestAVGResult Sequential_Run_AVG = new RunTestAVGResult();
-			RunTestAVGResult Conditional_Run_AVG = new RunTestAVGResult();
-			RunTestAVGResult Random_Run_AVG = new RunTestAVGResult();
-			RunTestAVGResult MultiComponent_Run_AVG = new RunTestAVGResult();
-			RunTestAVGResult Calculation_Run_AVG = new RunTestAVGResult();
-
+			RunTestAVGResult ECS_Sequential_Run_AVG = new RunTestAVGResult();
+			RunTestAVGResult ECS_Conditional_Run_AVG = new RunTestAVGResult();
+			RunTestAVGResult ECS_Random_Run_AVG = new RunTestAVGResult();
+			RunTestAVGResult ECS_MultiComponent_Run_AVG = new RunTestAVGResult();
+			RunTestAVGResult ECS_Calculation_Run_AVG = new RunTestAVGResult();
+			// AVG for OOP
+			InitTestAVGResult OOP_Sequential_Init_AVG = new InitTestAVGResult();
+			InitTestAVGResult OOP_Conditional_Init_AVG = new InitTestAVGResult();
+			InitTestAVGResult OOP_Random_Init_AVG = new InitTestAVGResult();
+			InitTestAVGResult OOP_MultiComponent_Init_AVG = new InitTestAVGResult();
+			InitTestAVGResult OOP_Calculation_Init_AVG = new InitTestAVGResult();
+			// 반복테스트의 평균값 저장 - Run
+			RunTestAVGResult OOP_Sequential_Run_AVG = new RunTestAVGResult();
+			RunTestAVGResult OOP_Conditional_Run_AVG = new RunTestAVGResult();
+			RunTestAVGResult OOP_Random_Run_AVG = new RunTestAVGResult();
+			RunTestAVGResult OOP_MultiComponent_Run_AVG = new RunTestAVGResult();
+			RunTestAVGResult OOP_Calculation_Run_AVG = new RunTestAVGResult();
 
 			// ECS
 			#region ECSTEST
 			// 테스트를 위한 임시 초기화
-			for(int i = 0; i < RepeatCount ; i++)
+			for (int i = 0; i < RepeatCount ; i++)
 			{
 				Sequential_Init[i] = new();
 				Conditional_Init[i] = new();
@@ -74,17 +86,17 @@ namespace ECS_OOP_CompareTEST
 				MultiComponent_Run[i] = new();
 				Calculation_Run[i] = new();
 			}
-			Sequential_Init_AVG = new();
-			Conditional_Init_AVG = new();
-			Random_Init_AVG = new();
-			MultiComponent_Init_AVG = new();
-			Calculation_Init_AVG = new();
+			ECS_Sequential_Init_AVG = new();
+			ECS_Conditional_Init_AVG = new();
+			ECS_Random_Init_AVG = new();
+			ECS_MultiComponent_Init_AVG = new();
+			ECS_Calculation_Init_AVG = new();
 
-			Sequential_Run_AVG = new();
-			Conditional_Run_AVG = new();
-			Random_Run_AVG = new();
-			MultiComponent_Run_AVG = new();
-			Calculation_Run_AVG = new();
+			ECS_Sequential_Run_AVG = new();
+			ECS_Conditional_Run_AVG = new();
+			ECS_Random_Run_AVG = new();
+			ECS_MultiComponent_Run_AVG = new();
+			ECS_Calculation_Run_AVG = new();
 
 			RepeatTest_Cycle(typeof(ECS_Main),
 								Objectcount,
@@ -96,17 +108,15 @@ namespace ECS_OOP_CompareTEST
 								out RunTestResult[] ECS_run_SequentialResults);
 			Sequential_Init = ECS_init_SequentialResults;
 			Sequential_Run = ECS_run_SequentialResults;
-			Sequential_Init_AVG.AVGCaculatorForResult(Sequential_Init);
-			Sequential_Run_AVG.AVGCaculatorForResult(Sequential_Run);
+			ECS_Sequential_Init_AVG.AVGCaculatorForResult(Sequential_Init);
+			ECS_Sequential_Run_AVG.AVGCaculatorForResult(Sequential_Run);
 
 
 
 			ECS_ResultView(RepeatCount, Sequential_Init, Conditional_Init, Random_Init, MultiComponent_Init , Calculation_Init,
 										Sequential_Run , Conditional_Run , Random_Run , MultiComponent_Run , Calculation_Run);
 
-			ECS_ResultAVGView(Sequential_Init_AVG, Conditional_Init_AVG, Random_Init_AVG, MultiComponent_Init_AVG, Calculation_Init_AVG,
-							  Sequential_Run_AVG, Conditional_Run_AVG, Random_Run_AVG, MultiComponent_Run_AVG, Calculation_Run_AVG);
-
+			
 
 
 
@@ -140,17 +150,17 @@ namespace ECS_OOP_CompareTEST
 				MultiComponent_Run[i] = new();
 				Calculation_Run[i] = new();
 			}
-			Sequential_Init_AVG = new();
-			Conditional_Init_AVG = new();
-			Random_Init_AVG = new();
-			MultiComponent_Init_AVG = new();
-			Calculation_Init_AVG = new();
-
-			Sequential_Run_AVG = new();
-			Conditional_Run_AVG = new();
-			Random_Run_AVG = new();
-			MultiComponent_Run_AVG = new();
-			Calculation_Run_AVG = new();
+			OOP_Sequential_Init_AVG = new();
+			OOP_Conditional_Init_AVG = new();
+			OOP_Random_Init_AVG = new();
+			OOP_MultiComponent_Init_AVG = new();
+			OOP_Calculation_Init_AVG = new();
+		
+			OOP_Sequential_Run_AVG = new();
+			OOP_Conditional_Run_AVG = new();
+			OOP_Random_Run_AVG = new();
+			OOP_MultiComponent_Run_AVG = new();
+			OOP_Calculation_Run_AVG = new();
 			//SequentialTest
 			RepeatTest_Cycle(typeof(OOP_Main),
 								Objectcount,
@@ -162,8 +172,8 @@ namespace ECS_OOP_CompareTEST
 								out RunTestResult[] OOP_run_SequentialResults);
 			Sequential_Init = OOP_init_SequentialResults;
 			Sequential_Run = OOP_run_SequentialResults;
-			Sequential_Init_AVG.AVGCaculatorForResult(Sequential_Init);
-			Sequential_Run_AVG.AVGCaculatorForResult(Sequential_Run);
+			OOP_Sequential_Init_AVG.AVGCaculatorForResult(Sequential_Init);
+			OOP_Sequential_Run_AVG.AVGCaculatorForResult(Sequential_Run);
 			//ConditionalTest
 			RepeatTest_Cycle(typeof(OOP_Main),
 								Objectcount,
@@ -175,8 +185,8 @@ namespace ECS_OOP_CompareTEST
 								out RunTestResult[] OOP_run_ConditionalResults);
 			Conditional_Init = OOP_init_ConditionalResults;
 			Conditional_Run = OOP_run_ConditionalResults;
-			Conditional_Init_AVG.AVGCaculatorForResult(Conditional_Init);
-			Conditional_Run_AVG.AVGCaculatorForResult(Conditional_Run);
+			OOP_Conditional_Init_AVG.AVGCaculatorForResult(Conditional_Init);
+			OOP_Conditional_Run_AVG.AVGCaculatorForResult(Conditional_Run);
 			//RandomTest
 			RepeatTest_Cycle(typeof(OOP_Main),
 								Objectcount,
@@ -188,8 +198,8 @@ namespace ECS_OOP_CompareTEST
 								out RunTestResult[] OOP_run_RandomResults);
 			Random_Init = OOP_init_RandomResults;
 			Random_Run = OOP_run_RandomResults;
-			Random_Init_AVG.AVGCaculatorForResult(Random_Init);
-			Random_Run_AVG.AVGCaculatorForResult(Random_Run);
+			OOP_Random_Init_AVG.AVGCaculatorForResult(Random_Init);
+			OOP_Random_Run_AVG.AVGCaculatorForResult(Random_Run);
 			//MultiComponentTest
 			RepeatTest_Cycle(typeof(OOP_Main),
 								Objectcount,
@@ -201,8 +211,8 @@ namespace ECS_OOP_CompareTEST
 								out RunTestResult[] OOP_run_MultiComponentResults);
 			MultiComponent_Init = OOP_init_MultiComponentResults;
 			MultiComponent_Run = OOP_run_MultiComponentResults;
-			MultiComponent_Init_AVG.AVGCaculatorForResult(MultiComponent_Init);
-			MultiComponent_Run_AVG.AVGCaculatorForResult(MultiComponent_Run);
+			OOP_MultiComponent_Init_AVG.AVGCaculatorForResult(MultiComponent_Init);
+			OOP_MultiComponent_Run_AVG.AVGCaculatorForResult(MultiComponent_Run);
 			//CaculationTest
 			RepeatTest_Cycle(typeof(OOP_Main),
 								Objectcount,
@@ -214,18 +224,20 @@ namespace ECS_OOP_CompareTEST
 								out RunTestResult[] OOP_run_CalculationResults);
 			Calculation_Init = OOP_init_CalculationResults;
 			Calculation_Run = OOP_run_CalculationResults;
-			Calculation_Init_AVG.AVGCaculatorForResult(Calculation_Init);
-			Calculation_Run_AVG.AVGCaculatorForResult(Calculation_Run);
+			OOP_Calculation_Init_AVG.AVGCaculatorForResult(Calculation_Init);
+			OOP_Calculation_Run_AVG.AVGCaculatorForResult(Calculation_Run);
 
 
 			OOP_ResultView(RepeatCount, Sequential_Init, Conditional_Init, Random_Init, MultiComponent_Init, Calculation_Init,
 										Sequential_Run, Conditional_Run, Random_Run, MultiComponent_Run, Calculation_Run);
 
-			OOP_ResultAVGView(Sequential_Init_AVG, Conditional_Init_AVG, Random_Init_AVG, MultiComponent_Init_AVG, Calculation_Init_AVG,
-							  Sequential_Run_AVG, Conditional_Run_AVG, Random_Run_AVG, MultiComponent_Run_AVG, Calculation_Run_AVG);
 			#endregion
+			ECS_ResultAVGView(ECS_Sequential_Init_AVG, ECS_Conditional_Init_AVG, ECS_Random_Init_AVG, ECS_MultiComponent_Init_AVG, ECS_Calculation_Init_AVG,
+							  ECS_Sequential_Run_AVG, ECS_Conditional_Run_AVG, ECS_Random_Run_AVG, ECS_MultiComponent_Run_AVG, ECS_Calculation_Run_AVG);
 
 
+			OOP_ResultAVGView(OOP_Sequential_Init_AVG, OOP_Conditional_Init_AVG, OOP_Random_Init_AVG, OOP_MultiComponent_Init_AVG, OOP_Calculation_Init_AVG,
+							  OOP_Sequential_Run_AVG, OOP_Conditional_Run_AVG, OOP_Random_Run_AVG, OOP_MultiComponent_Run_AVG, OOP_Calculation_Run_AVG);
 
 			//TestResult ECSresult = new TestResult();
 			//TestResult OOPresult = new TestResult();

@@ -23,10 +23,9 @@ namespace ECS_OOP_CompareTEST
 		MultiComponentTestSystem_ECS multiComponent = new MultiComponentTestSystem_ECS();
 		CaculationTestSystem_ECS caculation = new CaculationTestSystem_ECS();
 
-		EntityQuery[] query = new EntityQuery[5]; 
+		EntityQuery[] query = new EntityQuery[5];
 
-
-
+		
 
 		public void Init(int EntityCount , Testcase test)
 		{
@@ -77,8 +76,7 @@ namespace ECS_OOP_CompareTEST
 					
 					else
 					{
-						Entitys[i] = ECSCore.CreateEntity(	typeof(ActiveComponent),
-															typeof(DummyComponent));					
+						Entitys[i] = ECSCore.CreateEntity(	typeof(ActiveComponent));					
 					}
 				}
 				else
@@ -89,40 +87,187 @@ namespace ECS_OOP_CompareTEST
 				ECSCore.Init(Entitys[i]);
 
 			}
-			Query_Filter_1 = ecsMG.Query()
-				.WithAll<PositionXComponent, VelocityXComponent>()
-				.WithNone<NeedInit>()
-				.Build();
+			
+
+
 			query[0] = ECSCore.Query()
-				.WithAll<>()
-				.WithNone<>()
-				.WithAny<>();
-											
-
-			
-
-			
-			switch (test)
+				.WithAll<ActiveComponent>()
+				.WithAll<PositionXComponent>()
+				.WithAll<PositionYComponent>()
+				.WithAll<PositionZComponent>()
+				.WithAll<VelocityXComponent>()
+				.WithAll<VelocityYComponent>()
+				.WithAll<VelocityZComponent>()
+				.WithNone<DummyComponent>()
+				.Build();
+			query[0].UpdateArchetypes(ECSCore.entityManager);
+			foreach (var archetype in query[0].archetypes)
 			{
-				case Testcase.SEQUENTIAL:
-					sequential.Set(ECSCore);
-					break;
-				case Testcase.CONDITIONAL:
-					conditional.Set(ECSCore);
-					break;
-				case Testcase.RANDOM:
-					random.Set(ECSCore);
-					break;
-				case Testcase.MULTICOMPONENT:
-					multiComponent.Set(ECSCore);
-					break;
-				case Testcase.CACULATION:
-					caculation.Set(ECSCore);
-					break;
-				default:
-					break;
-
+				var active_IDx = archetype.GetTypeIndex<ActiveComponent>();
+				var posX_IDx = archetype.GetTypeIndex<PositionXComponent>();
+				var posY_IDx = archetype.GetTypeIndex<PositionYComponent>();
+				var posZ_IDx = archetype.GetTypeIndex<PositionZComponent>();
+				var velX_IDx = archetype.GetTypeIndex<VelocityXComponent>();
+				var velY_IDx = archetype.GetTypeIndex<VelocityYComponent>();
+				var velZ_IDx = archetype.GetTypeIndex<VelocityZComponent>();
+				foreach (var chunk in archetype.Chunks)
+				{
+					var active_Span = chunk.GetSpan<ActiveComponent>(active_IDx);
+					var posX_Span = chunk.GetSpan<PositionXComponent>(posX_IDx);
+					var posY_Span = chunk.GetSpan<PositionYComponent>(posY_IDx);
+					var posZ_Span = chunk.GetSpan<PositionZComponent>(posZ_IDx);
+					var velX_Span = chunk.GetSpan<VelocityXComponent>(velX_IDx);
+					var velY_Span = chunk.GetSpan<VelocityYComponent>(velY_IDx);
+					var velZ_Span = chunk.GetSpan<VelocityZComponent>(velZ_IDx);
+					
+					for(int i = 0 ; i < chunk.ChunkCount ; i++)
+					{
+						active_Span[i].Is = rand.Next(2) == 1;
+						posX_Span[i].value = rand.Next(0,1000);
+						posY_Span[i].value = rand.Next(0,1000);
+						posZ_Span[i].value = rand.Next(0,1000);
+						velX_Span[i].value = rand.Next(0,1000);
+						velY_Span[i].value = rand.Next(0,1000);
+						velZ_Span[i].value = rand.Next(0,1000);
+					}
+				}
 			}
+
+			query[1] = ECSCore.Query()
+				.WithAll<ActiveComponent>()
+				.WithAll<PositionXComponent>()
+				.WithAll<PositionYComponent>()
+				.WithAll<PositionZComponent>()
+				.WithNone<VelocityXComponent>()
+				.WithNone<VelocityYComponent>()
+				.WithNone<VelocityZComponent>()
+				.WithNone<DummyComponent>()
+				.Build();
+			query[1].UpdateArchetypes(ECSCore.entityManager);
+			foreach (var archetype in query[1].archetypes)
+			{
+				var active_IDx = archetype.GetTypeIndex<ActiveComponent>();
+				var posX_IDx = archetype.GetTypeIndex<PositionXComponent>();
+				var posY_IDx = archetype.GetTypeIndex<PositionYComponent>();
+				var posZ_IDx = archetype.GetTypeIndex<PositionZComponent>();
+				foreach (var chunk in archetype.Chunks)
+				{
+					var active_Span = chunk.GetSpan<ActiveComponent>(active_IDx);
+					var posX_Span = chunk.GetSpan<PositionXComponent>(posX_IDx);
+					var posY_Span = chunk.GetSpan<PositionYComponent>(posY_IDx);
+					var posZ_Span = chunk.GetSpan<PositionZComponent>(posZ_IDx);
+
+					for (int i = 0; i < chunk.ChunkCount; i++)
+					{
+						active_Span[i].Is = rand.Next(2) == 1;
+						posX_Span[i].value = rand.Next(0, 1000);
+						posY_Span[i].value = rand.Next(0, 1000);
+						posZ_Span[i].value = rand.Next(0, 1000);
+					}
+				}
+			}
+
+			query[2] = ECSCore.Query()
+				.WithAll<ActiveComponent>()
+				.WithAll<VelocityXComponent>()
+				.WithAll<VelocityYComponent>()
+				.WithAll<VelocityZComponent>()
+				.WithNone<PositionXComponent>()
+				.WithNone<PositionYComponent>()
+				.WithNone<PositionZComponent>()
+				.WithNone<DummyComponent>()
+				.Build();
+			query[2].UpdateArchetypes(ECSCore.entityManager);
+			foreach (var archetype in query[2].archetypes)
+			{
+				var active_IDx = archetype.GetTypeIndex<ActiveComponent>();
+				var velX_IDx = archetype.GetTypeIndex<VelocityXComponent>();
+				var velY_IDx = archetype.GetTypeIndex<VelocityYComponent>();
+				var velZ_IDx = archetype.GetTypeIndex<VelocityZComponent>();
+				foreach (var chunk in archetype.Chunks)
+				{
+					var active_Span = chunk.GetSpan<ActiveComponent>(active_IDx);
+					var velX_Span = chunk.GetSpan<VelocityXComponent>(velX_IDx);
+					var velY_Span = chunk.GetSpan<VelocityYComponent>(velY_IDx);
+					var velZ_Span = chunk.GetSpan<VelocityZComponent>(velZ_IDx);
+
+					for (int i = 0; i < chunk.ChunkCount; i++)
+					{
+						active_Span[i].Is = rand.Next(2) == 1;
+						velX_Span[i].value = rand.Next(0, 1000);
+						velY_Span[i].value = rand.Next(0, 1000);
+						velZ_Span[i].value = rand.Next(0, 1000);
+					}
+				}
+			}
+
+			query[3] = ECSCore .Query()
+				.WithAll<ActiveComponent>()
+				.WithNone<PositionXComponent>()
+				.WithNone<PositionYComponent>()
+				.WithNone<PositionZComponent>()
+				.WithNone<VelocityXComponent>()
+				.WithNone<VelocityYComponent>()
+				.WithNone<VelocityZComponent>()
+				.WithNone<DummyComponent>()
+				.Build();
+			query[3].UpdateArchetypes(ECSCore.entityManager);
+			foreach (var archetype in query[3].archetypes)
+			{
+				var active_IDx = archetype.GetTypeIndex<ActiveComponent>();
+				foreach (var chunk in archetype.Chunks)
+				{
+					var active_Span = chunk.GetSpan<ActiveComponent>(active_IDx);
+
+					for (int i = 0; i < chunk.ChunkCount; i++)
+					{
+						active_Span[i].Is = rand.Next(2) == 1;
+					}
+				}
+			}
+
+			query[4] = ECSCore.Query()
+				.WithAll<DummyComponent>()
+				.WithNone<ActiveComponent>()
+				.WithNone<PositionXComponent>()
+				.WithNone<PositionYComponent>()
+				.WithNone<PositionZComponent>()
+				.WithNone<VelocityXComponent>()
+				.WithNone<VelocityYComponent>()
+				.WithNone<VelocityZComponent>()
+				.Build();
+			query[4].UpdateArchetypes(ECSCore.entityManager);
+			foreach (var archetype in query[4].archetypes)
+			{
+				var dummy_IDx = archetype.GetTypeIndex<DummyComponent>();
+				foreach (var chunk in archetype.Chunks)
+				{
+					var dummy_Span =  chunk.GetSpan<DummyComponent>(dummy_IDx);
+				}
+			}
+
+
+			switch (test)
+				{
+					case Testcase.SEQUENTIAL:
+						sequential.Set(ECSCore);
+						break;
+					case Testcase.CONDITIONAL:
+						conditional.Set(ECSCore);
+						break;
+					case Testcase.RANDOM:
+						random.Set(ECSCore);
+						break;
+					case Testcase.MULTICOMPONENT:
+						multiComponent.Set(ECSCore);
+						break;
+					case Testcase.CACULATION:
+						caculation.Set(ECSCore);
+						break;
+					default:
+						break;
+
+				}
 		}
 
 		public void RunSequential() => sequential.OnUpdate(ECSCore);
@@ -130,65 +275,6 @@ namespace ECS_OOP_CompareTEST
 		public void RunRandom() => random.OnUpdate(ECSCore);
 		public void RunMultiComponent() => multiComponent.OnUpdate(ECSCore);
 		public void RunCalculation() => caculation.OnUpdate(ECSCore);
-		//public void RunSequential()
-		//{
-		//	int[] _PosTypeIndex;
-		//	int[] _VelTypeIndex;
-		//	int archetypeIndex1;
-		//	int archetypeIndex2;
-		//	EntityQuery Query_Filter_1 = ECSCore.Query()
-		//		.WithAll<PositionXComponent,VelocityXComponent>()
-		//		.WithNone<NeedInit>()
-		//		.Build();
-		//	Query_Filter_1.UpdateArchetypes(ECSCore.entityManager);
-		//	_PosTypeIndex = new int[Query_Filter_1.archetypes.Count];
-		//	_VelTypeIndex = new int[Query_Filter_1.archetypes.Count];
-		//	archetypeIndex1 = 0;
-		//	archetypeIndex2 = 0;
-
-		//	foreach (var archetype in Query_Filter_1.archetypes)
-		//	{
-		//		if (archetype.TypeIndexMap.TryGetValue(ComponentTypeRegister.GetID(typeof(PositionXComponent)), out int index1))
-		//			_PosTypeIndex[archetypeIndex1++] = index1;
-		//		else
-		//		{
-		//			_PosTypeIndex[archetypeIndex1++] = -1;
-		//			throw new InvalidDataException(" didn't find Type in Archetype");
-		//		}
-		//		if (archetype.TypeIndexMap.TryGetValue(ComponentTypeRegister.GetID(typeof(VelocityXComponent)), out int index2))
-		//			_VelTypeIndex[archetypeIndex2++] = index2;
-		//		else
-		//		{
-		//			_VelTypeIndex[archetypeIndex2++] = -1;
-		//			throw new InvalidDataException(" didn't find Type in Archetype");
-		//		}
-		//	}
-
-		//		archetypeIndex1 = 0;
-		//		archetypeIndex2 = 0;
-
-		//	Query_Filter_1.UpdateArchetypes(ECSCore.entityManager);
-		//	foreach (var archetype in Query_Filter_1.archetypes)
-		//	{
-		//		// 아키타입내부 컴포넌트 타입에 맞는 청크 순환
-		//		foreach (var chunk in archetype.Chunks)
-		//		{
-		//			var PosArray = chunk.GetSpan<PositionXComponent>(_PosTypeIndex[archetypeIndex1]);
-		//			var VelArray = chunk.GetSpan<VelocityXComponent>(_VelTypeIndex[archetypeIndex2]);
-		//			for (int i = 0; i < PosArray.Length; i++)
-		//			{
-		//				PosArray[i].value += VelArray[i].value;
-		//			}
-		//		}
-		//		archetypeIndex1++;
-		//		archetypeIndex2++;
-		//	}
-		//}
-
-
-
+		
 	}
-	
-	
-
 }

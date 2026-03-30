@@ -44,7 +44,7 @@ namespace ECSCore
 		//		TypeIndexMap.Add(ComponentTypeRegister.GetID(Types[i]), i);
 		//	}
 		//}
-		internal Archetype(int [] typesID, int memorySize)
+		internal Archetype(int[] typesID, int memorySize)
 		{
 			Types = ComponentTypeRegister.ReturnTypesfor(typesID);
 			ChunkMaxSize = Tool.CaculatorCapacityForSize(memorySize, Types);
@@ -92,24 +92,29 @@ namespace ECSCore
 
 		internal bool IncludeNeedType(EntityQuery query)
 		{
-			// 항상 갖공 있는
-			foreach(var all in query.All) 
-			{
-				if (!TypeIndexMap.ContainsKey(all))
-					return false; 
-			}
 			// 가지고 있으면 안되는
-			foreach(var none in query.None) 
+			foreach (var none in query.None)
 			{
 				if (TypeIndexMap.ContainsKey(none))
 					return false;
 			}
-			// 하나라도 있는 
-			foreach(var any in query.Any) 
+			// 항상 갖공 있는
+			foreach (var all in query.All)
 			{
-				if (!TypeIndexMap.ContainsKey(any))
+				if (!TypeIndexMap.ContainsKey(all))
 					return false;
 			}
+			// 하나라도 있는 
+			if (query.Any.Length > 0)
+			{
+				foreach (var any in query.Any)
+				{
+					if (TypeIndexMap.ContainsKey(any))
+						return true;
+				}
+				return false;
+			}
+
 
 			return true;
 		}

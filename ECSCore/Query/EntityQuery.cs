@@ -15,7 +15,6 @@ namespace ECSCore
 		internal bool IsClean = true; 
 
 		internal readonly List<Archetype> archetypes = new List<Archetype>();
-
 		internal EntityQuery(int[] _all , int[] _none , int[] _any)
 		{
 			this.All = _all;
@@ -44,6 +43,10 @@ namespace ECSCore
 
 			IsClean = true;
 		}
+
+
+
+
 		internal void NeedClean() => IsClean = false;
 
 	}
