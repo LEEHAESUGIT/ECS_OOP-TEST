@@ -11,11 +11,17 @@ namespace ECSCore
 {
 	internal class Archetype
 	{
+		// Chunk
 		internal readonly List<Chunk> Chunks = new();
-		// 불변
-		internal readonly Dictionary<int, int> TypeIndexMap = new();
-		internal readonly Type[] Types;
+		// TypeIndex
+		internal readonly int[] ComponentTypeOrder;
+		internal readonly int[] TypeIndexArray;
+		
+		// ChunkCount
 		internal readonly int ChunkMaxSize;
+		// BitMask
+		internal readonly ulong typeMask = 0;
+
 
 		// 아키타입에 포함된 엔티티들
 		// 엔티티들이 아키타입에 생성된 순서대로 대입된다.
@@ -33,27 +39,33 @@ namespace ECSCore
 		//				ㄴ ComponentArray[][] 컴포넌트 인덱스
 
 		// capacitySize = 16384 == 16kb
-		//internal Archetype(Type[] types, int memorySize)
-		//{
-		//	Types = types;
-		//	ChunkMaxSize = Tool.CaculatorCapacityForSize(memorySize, Types);
-		//	Chunks.Add(new Chunk(this));
-
-		//	for (int i = 0; i < Types.Length; i++)
-		//	{
-		//		TypeIndexMap.Add(ComponentTypeRegister.GetID(Types[i]), i);
-		//	}
-		//}
-		internal Archetype(int[] typesID, int memorySize)
+		
+		internal Archetype(ulong typeMask,int memorySize)
 		{
-			Types = ComponentTypeRegister.ReturnTypesfor(typesID);
-			ChunkMaxSize = Tool.CaculatorCapacityForSize(memorySize, Types);
-			Chunks.Add(new Chunk(this));
+			this.typeMask = typeMask;
 
-			for (int i = 0; i < Types.Length; i++)
+			int typeCount = BitMaskRegister.CountTypeInBitMask(typeMask);
+			int componentCount = ComponentTypeRegister.TypeCount;
+
+			ComponentTypeOrder = new int[typeCount];
+			TypeIndexArray = new int[componentCount];
+
+			Array.Fill(TypeIndexArray , -1);
+
+			int count = 0;
+			
+			for(int id = 0; id < componentCount; id++)
 			{
-				TypeIndexMap.Add(ComponentTypeRegister.GetID(Types[i]), i);
+				if (BitMaskRegister.IsIncludeTypeInBitMask(typeMask, id))
+				{
+					ComponentTypeOrder[count] = id;
+					TypeIndexArray[id] = count;
+					count++;
+				}
 			}
+
+			ChunkMaxSize = Tool.CaculatorCapacityForSize(memorySize, typeMask);
+			Chunks.Add(new Chunk(this));
 		}
 
 		private Chunk createChunk()
@@ -77,58 +89,33 @@ namespace ECSCore
 
 		internal bool IsNeedInit()
 		{
-
-			return TypeIndexMap.ContainsKey(ComponentTypeRegister.GetID(typeof(NeedInit)));
-
-			//foreach(var a in TypeIndexMap)
-			//{
-			//	if(a.Key.ID == ComponentTypeRegister.GetID(typeof(NeedInit)))
-			//	{
-			//		return true;
-			//	}
-			//}
-			//return false;
+			int needInitID = ComponentTypeRegister.GetID<NeedInit>();
+			return BitMaskRegister.IsIncludeTypeInBitMask(typeMask,needInitID);
 		}
 
 		internal bool IncludeNeedType(EntityQuery query)
 		{
-			// 가지고 있으면 안되는
-			foreach (var none in query.None)
-			{
-				if (TypeIndexMap.ContainsKey(none))
-					return false;
-			}
 			// 항상 갖공 있는
-			foreach (var all in query.All)
-			{
-				if (!TypeIndexMap.ContainsKey(all))
-					return false;
-			}
-			// 하나라도 있는 
-			if (query.Any.Length > 0)
-			{
-				foreach (var any in query.Any)
-				{
-					if (TypeIndexMap.ContainsKey(any))
-						return true;
-				}
+			if ((typeMask & query.AllMask) != query.AllMask)
 				return false;
-			}
-
+			// 하나라도 있는 
+			if ((query.AnyMask != 0) && ( typeMask & query.AnyMask) == 0)
+				return false;
+			// 가지고 있으면 안되는
+			if ((typeMask & query.NoneMask) !=  0)
+				return false;
 
 			return true;
 		}
+
+
 		// For System
-		internal int GetTypeIndex<T>()
+		internal int GetTypeIndex(int typeID)
 		{
-			if (TypeIndexMap.TryGetValue(ComponentTypeRegister.GetID(typeof(T)), out int value))
-				return value;
-			else
+			if (!BitMaskRegister.IsIncludeTypeInBitMask(typeMask, typeID))
 				throw new InvalidDataException("didn't have type in Archetype");
+			return TypeIndexArray[typeID];
 		}
-
-
-
 	}
 
 

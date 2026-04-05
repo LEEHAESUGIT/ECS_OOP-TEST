@@ -31,6 +31,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Runtime.InteropServices;
 using System.Xml;
 
 namespace ECSCore
@@ -50,56 +51,48 @@ namespace ECSCore
 		public ECSManager()
 		{
 			// 컴포넌트 그룹 타입저장
-			//CoponentSetting.SetComponent();
+			ComponentSetting.SetComponent();
 			_QM = new QueryManager(entityManager);
 		}
 
 		#region CreateEntity
-		// 처음 생성되는 객체는 기본값으로 NeedInit컴포넌트가 플래그로 들어간다.
-		// 초기화와 함께 NeedInit컴포넌트가 없이 초기화 가 된다.
-		//public Entity CreateEntity(params Type[] componentTypes)
-		//{
-		//	// ToDo
-		//	// 기능나누기
-		//	//		매개변수에 아무것도 들어오지 않았을때 예외처리
-		//	//		Stack인 freeID에서 재사용할 ID가 있는지 확인후 재발급 or 신규발급
-		//	//		NeedInit컴포넌트 삽입.
-		//	//		발급받은 엔티티ID, NeedInit이 포함된 컴포넌트 타입을 기준으로 엔티티 생성
-		//	// fin
-		//	if(IsTypeDuplication(out int[] sortTypeIDS , componentTypes))
-		//		throw new ArgumentException("ComponentType Dublication ");
-
-		//	if (componentTypes.Length == 0)
-		//		throw new ArgumentException("Nothing Types");
-
-		//	int resultID = entityIdIssuance(freeID);
-		//	Type[] resultCombineTypes = insertNeedInit(componentTypes);
-		//	sortTypeIDS = ComponentTypeRegister.ReturnTypesIDfor(resultCombineTypes);
-
-
-
-
-		//	return entityManager.SpawnEntityRecord(resultID, sortTypeIDS);
-		//}
-		public Entity CreateEntity(params Type[] componentTypes)
+		public Entity CreateEntity(ulong typeBitMask)
 		{
-			// ToDo
-			// 기능나누기
-			//		매개변수에 아무것도 들어오지 않았을때 예외처리
-			//		Stack인 freeID에서 재사용할 ID가 있는지 확인후 재발급 or 신규발급
-			//		NeedInit컴포넌트 삽입.
-			//		발급받은 엔티티ID, NeedInit이 포함된 컴포넌트 타입을 기준으로 엔티티 생성
-			// fin
-			if (IsTypeDuplication( componentTypes))
-				throw new ArgumentException("ComponentType Dublication ");
-
-			if (componentTypes.Length == 0)
+			if (typeBitMask == 0uL)
 				throw new ArgumentException("Nothing Types");
 
-			int resultID = entityIdIssuance(freeID);
-			int[] sortTypeIDs = insertNeedInit(componentTypes);
 
-			return entityManager.SpawnEntityRecord(resultID, sortTypeIDs);
+
+			typeBitMask |= ComponentTypeRegister.Getbitmask(ComponentTypeRegister.GetID<NeedInit>());
+			int resultID = entityIdIssuance(freeID);
+
+
+			return entityManager.SpawnEntityRecord(resultID, typeBitMask);
+		}
+		
+		public Entity CreateEntity(params Type[] componentTypes)
+		{
+			ulong typeMask = 0;
+			
+			// 무조건 타입 한개 포함해야한다.
+			if (componentTypes.Length == 0)
+				throw new ArgumentException("Nothing Types");
+			// 비트마스크를 생성하면서 비트마스크로 중복검사
+			for(int i = 0;  i < componentTypes.Length; i++)
+			{
+				int id = ComponentTypeRegister.GetID(componentTypes[i]);
+				ulong bit = (1LU << id);
+				if((typeMask & bit) != 0)
+				{
+					throw new ArgumentException("Is Duplication");
+				}
+				typeMask |= bit;
+			}
+			typeMask |= ComponentTypeRegister.Getbitmask(ComponentTypeRegister.GetID<NeedInit>());
+			// 생성할 엔티티를 스택에서 재사용할것이 있는지 확인.
+			int resultID = entityIdIssuance(freeID);
+
+			return entityManager.SpawnEntityRecord(resultID, typeMask);
 		}
 
 		// Check the stack for recycleID and Issuance
@@ -107,25 +100,7 @@ namespace ECSCore
 		{
 			return stackID.Count > 0 ? stackID.Pop() : nextID++; 
 		}
-
-		// expend TypeArray and input NeedInit Component , return combineTypes 
-		//internal Type[] insertNeedInit(Type[] componentTypes)
-		//{
-		//	Type[] combineTypes = new Type[componentTypes.Length + 1];
-		//	Array.Copy(componentTypes, combineTypes, componentTypes.Length);
-		//	combineTypes[^1] = typeof(NeedInit);
-
-		//	return combineTypes;
-		//}
-		internal int[] insertNeedInit(Type[] componentTypes)
-		{
-			int[] resultTypeIDs = new int[componentTypes.Length +1];
-			int[] idToTypes = ComponentTypeRegister.ReturnTypesIDfor(componentTypes);
-			Array.Copy(idToTypes , resultTypeIDs , idToTypes.Length);
-			resultTypeIDs[^1] = ComponentTypeRegister.GetID(typeof(NeedInit));
-
-			return resultTypeIDs;
-		}
+		
 		#endregion
 
 		#region Init
@@ -137,49 +112,21 @@ namespace ECSCore
 		// 실제 값을 초기화 하는것은 Get메소드를 사용하여 직접 대입하게 된다.
 		public Entity Init(Entity entity)
 		{
-			// ToDo
-			// 기능나누기
-			//		초기화 하려는 엔티티가 현재 존재하는지 확인
-			//		NeedInit 컴포넌트가 존재하는지 확인
-			//		NeedInit컴포넌트 삭제
-			//		후처리된 타입배열로 엔티티 초기화
 			if (!Has(entity))
 				throw new InvalidOperationException("Not Alive Entity");
 
 			var record = entityManager._entityRecord[entity.ID];
+			ulong typeMask = record.CapturedArchetype.typeMask;
 
-			if (!record.CapturedArchetype.IsNeedInit())
+
+			if(!BitMaskRegister.IsIncludeTypeInBitMask(typeMask,ComponentTypeRegister.GetID<NeedInit>()))
 				throw new InvalidOperationException("Entity already initialized");
 
-			Type[] resultTypes = removeNeedInit(record.CapturedArchetype.Types);
-			int[] resultTypesID = ComponentTypeRegister.ReturnTypesIDfor(resultTypes);
-
-			//Type[] types = record.CapturedArchetype.Types;
-			//Type[] resultTypes = new Type[types.Length - 1];
-			//int typeFlag = ComponentTypeRegister.GetID<NeedInit>();
-			//int count = 0;
-			//foreach (var type in types)
-			//{
-			//	if (typeFlag != ComponentTypeRegister.GetID(type))
-			//	{
-			//		resultTypes[count++] = type;
-			//	}
-			//}
-			return entityManager.InitEntityRecord(entity.ID, resultTypesID);
+			typeMask = BitMaskRegister.RemoveType(typeMask , ComponentTypeRegister.GetID<NeedInit>());
+			return entityManager.InitEntityRecord(entity.ID, typeMask);
 		}
 
-		internal Type[] removeNeedInit(Type[] componentTypes)
-		{
-			Type[] resultTypes = new Type[componentTypes.Length - 1];
-			int typeFlag = ComponentTypeRegister.GetID<NeedInit>();
-			int count = 0;
-			foreach(var type in componentTypes)
-			{
-				if (typeFlag != ComponentTypeRegister.GetID(type))
-					resultTypes[count++] = type;
-			}
-			return resultTypes;
-		}
+		
 		#endregion
 
 		#region Get
@@ -187,21 +134,20 @@ namespace ECSCore
 		public ref T Get<T>(Entity entity)
 			where T : struct, IComponentData
 		{
+			int getID = ComponentTypeRegister.GetID(typeof(T));
 			if (!Has(entity))
 				throw new InvalidOperationException("Not Alive Entity");
 
 			var record = entityManager._entityRecord[entity.ID];
-
 			if (record.CapturedArchetype.IsNeedInit())
 				throw new InvalidOperationException("This Entity Is Need Init");
 
-			if(record.CapturedArchetype.TypeIndexMap.TryGetValue(ComponentTypeRegister.GetID(typeof(T)), out int typeIndex))
+			if(BitMaskRegister.IsIncludeTypeInBitMask(record.CapturedArchetype.typeMask, getID))
 			{
-				return ref record.CapturedChunk.Get<T>(typeIndex,record.IndexInChunk);
+				return ref record.CapturedChunk.Get<T>(record.CapturedArchetype.GetTypeIndex(getID) , record.IndexInChunk);
 			}
 			throw new InvalidOperationException("didn't find ComponentType");
-			//var typeIndex = record.CapturedArchetype.TypeIndexMap[new ComponentTypeID(ComponentTypeRegister.GetID(typeof(T)))];
-			//return ref record.CapturedChunk.Get<T>(typeIndex, record.IndexInChunk);
+
 		}
 		#endregion
 
@@ -238,46 +184,7 @@ namespace ECSCore
 			return true;
 		}
 		#endregion
-		//internal bool IsTypeDuplication(out int[] sortTypes ,params Type[] types)
-		//{
-		//	// 오름차순 정렬
-		//	HashSet<int> set = new HashSet<int>();
-
-		//	sortTypes = new int[types.Length];
-
-		//	int count = 0;
-		//	foreach (Type type in types)
-		//	{
-		//		int id = ComponentTypeRegister.GetID(type);
-		//		sortTypes[count++] = id;
-		//		if(!set.Add(id))
-		//		{
-		//			return true;
-		//		}
-		//	}
-		//	Array.Sort(sortTypes);
- 	//		return false;
-		//}
-		internal bool IsTypeDuplication(params Type[] types)
-		{
-			// 오름차순 정렬
-			HashSet<int> set = new HashSet<int>();
-			int[] sortTypes = new int[types.Length];
-			int count = 0;
-
-			foreach (Type type in types)
-			{
-				int id = ComponentTypeRegister.GetID(type);
-				sortTypes[count++] = id;
-				if (!set.Add(id))
-				{
-					return true;
-				}
-			}
-			Array.Sort(sortTypes);
-			return false;
-		}
-
+		
 		internal QueryBuilder Query()
 		{
 			return new QueryBuilder(_QM);

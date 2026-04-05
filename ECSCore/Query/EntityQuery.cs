@@ -8,26 +8,31 @@ namespace ECSCore
 { 
 	internal class EntityQuery
 	{
-		internal readonly int[] All;
-		internal readonly int[] None;
-		internal readonly int[] Any;
+		internal readonly ulong AllMask;
+		internal readonly ulong NoneMask;
+		internal readonly ulong AnyMask;
 
 		internal bool IsClean = true; 
 
 		internal readonly List<Archetype> archetypes = new List<Archetype>();
-		internal EntityQuery(int[] _all , int[] _none , int[] _any)
-		{
-			this.All = _all;
-			this.None = _none;
-			this.Any = _any;
 
-			Array.Sort(this.All);
-			Array.Sort(this.None);
-			Array.Sort(this.Any);
+		internal EntityQuery(ulong all_Mask , ulong none_Mask , ulong any_Mask)
+		{
+			this.AllMask = all_Mask;
+			this.NoneMask = none_Mask;
+			this.AnyMask = any_Mask;
 
 			IsClean = true;
 		}
-		public void UpdateArchetypes(EntityManager em)
+
+		internal IReadOnlyList<Archetype> GetArchetype(EntityManager em)
+		{
+			UpdateArchetypes(em);
+			return archetypes;
+		}
+
+
+		private void UpdateArchetypes(EntityManager em)
 		{
 			if (!IsClean) return;
 
@@ -35,7 +40,7 @@ namespace ECSCore
 
 			foreach(var archetype in em.GetAllArchetypes())
 			{
-				if(archetype.IncludeNeedType(this))
+				if (archetype.IncludeNeedType(this))
 				{
 					this.archetypes.Add(archetype);
 				}
@@ -43,10 +48,6 @@ namespace ECSCore
 
 			IsClean = true;
 		}
-
-
-
-
 		internal void NeedClean() => IsClean = false;
 
 	}

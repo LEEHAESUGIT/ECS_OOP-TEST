@@ -9,7 +9,7 @@ namespace ECS_OOP_CompareTEST
 	internal class RandomTestSystem_OOP : IObject
 	{
 		Random rand = new Random(1000);
-		public int[] RandomIndexs;
+		private int[] RandomIndexs;
 		public void Set(OOPObejct[] oopObjects)
 		{
 			RandomIndexs = new int[oopObjects.Length];

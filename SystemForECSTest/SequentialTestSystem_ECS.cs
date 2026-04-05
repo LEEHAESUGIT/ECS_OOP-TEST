@@ -10,27 +10,29 @@ namespace ECS_OOP_CompareTEST
 {
 	internal class SequentialTestSystem_ECS : ISystem
 	{
-		EntityQuery Query_Filter;
-		
+		EntityQuery Query_FilterForSequential;
+
+		int activeID = ComponentTypeRegister.GetID<ActiveComponent>();
+		int posXID = ComponentTypeRegister.GetID<PositionXComponent>();
+		int velXID = ComponentTypeRegister.GetID<VelocityXComponent>();
 		public void Set(ECSManager ecsMG)
 		{
-			Query_Filter = ecsMG.Query()
+			Query_FilterForSequential = ecsMG.Query()
 				.WithAll<ActiveComponent>()
 				.WithAll<PositionXComponent>()
 				.WithAll<VelocityXComponent>()
 				.WithNone<DummyComponent>()
 				.Build();
-			Query_Filter.UpdateArchetypes(ecsMG.entityManager);
-
+			
 		}
 
 		public void OnUpdate(ECSManager ecsMG)
 		{
-			foreach (var archetype in Query_Filter.archetypes)
+			foreach (var archetype in Query_FilterForSequential.GetArchetype(ecsMG.entityManager))
 			{
-				var active_IDx = archetype.GetTypeIndex<ActiveComponent>();
-				var posX_IDx = archetype.GetTypeIndex<PositionXComponent>();
-				var velX_IDx = archetype.GetTypeIndex<VelocityXComponent>();
+				var active_IDx = archetype.GetTypeIndex(activeID);
+				var posX_IDx = archetype.GetTypeIndex(posXID);
+				var velX_IDx = archetype.GetTypeIndex(velXID);
 				foreach (var chunk in archetype.Chunks)
 				{
 					var active_Span = chunk.GetSpan<ActiveComponent>(active_IDx);

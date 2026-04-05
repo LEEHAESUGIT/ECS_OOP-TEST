@@ -52,7 +52,7 @@ namespace ECS_OOP_CompareTEST
 				case Testcase.MULTICOMPONENT:
 					multiComponent.Set(oopObjects);
 					break;
-				case Testcase.CACULATION:
+				case Testcase.CALCULATION:
 					caculation.Set(oopObjects);
 					break;
 				default: 
