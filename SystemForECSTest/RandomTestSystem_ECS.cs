@@ -19,7 +19,9 @@ namespace ECS_OOP_CompareTEST
 		int velYID = ComponentTypeRegister.GetID<VelocityYComponent>();
 		int velZID = ComponentTypeRegister.GetID<VelocityZComponent>();
 
-		private int[] RandomIndexs;
+
+		//private int[] RandomArchetypeIndexs;
+		private int[][] RandomChunksIndexs;
 
 		public void Set(ECSManager ecsMG)
 		{
@@ -35,10 +37,32 @@ namespace ECS_OOP_CompareTEST
 										.WithNone<DummyComponent>()
 										.Build();
 
-			
+			//int archetypeIndex = 0;
+			int chunkCount = 0;
+			foreach (var archetype in Query_FilterForRandom.GetArchetype(ecsMG.entityManager))
+			{
+				//RandomArchetypeIndexs = new int[Query_FilterForRandom.archetypes.Count];
+				RandomChunksIndexs = new int[archetype.Chunks.Count][];
+				var active_IDx = archetype.GetTypeIndex(activeID);
+				foreach (var chunk in archetype.Chunks)
+				{
+					RandomChunksIndexs[chunkCount] = new int[chunk.ChunkCount];
+					var active_Span = chunk.GetSpan<ActiveComponent>(active_IDx);
+					for (int i = 0; i < chunk.ChunkCount; i++)
+					{
+						active_Span[i].Is = rand.Next(2) == 1;
+						RandomChunksIndexs[chunkCount][i] = i;
+					}
+					shuffle(RandomChunksIndexs[chunkCount]);
+					chunkCount++;
+				}
+				//archetypeIndex++;
+			}
+
 		}
 		public void OnUpdate(ECSManager ecsMG)
 		{
+			int chunkCount = 0;
 			foreach (var archetype in Query_FilterForRandom.GetArchetype(ecsMG.entityManager))
 			{
 				var active_IDx = archetype.GetTypeIndex(activeID);
@@ -50,8 +74,6 @@ namespace ECS_OOP_CompareTEST
 				var velZ_IDx = archetype.GetTypeIndex(velZID);
 				foreach (var chunk in archetype.Chunks)
 				{
-					RandomIndexs = new int[chunk.ChunkCount];
-					shuffle(RandomIndexs);
 					var active_Span = chunk.GetSpan<ActiveComponent>(active_IDx);
 					var posX_Span = chunk.GetSpan<PositionXComponent>(posX_IDx);
 					var posY_Span = chunk.GetSpan<PositionYComponent>(posY_IDx);
@@ -60,17 +82,16 @@ namespace ECS_OOP_CompareTEST
 					var velY_Span = chunk.GetSpan<VelocityYComponent>(velY_IDx);
 					var velZ_Span = chunk.GetSpan<VelocityZComponent>(velZ_IDx);
 
-
 					for (int i = 0; i < chunk.ChunkCount; i++)
 					{
-
-						if (active_Span[RandomIndexs[i]].Is)
+						if (active_Span[RandomChunksIndexs[chunkCount][i]].Is)
 						{
-							posX_Span[RandomIndexs[i]].value += velX_Span[RandomIndexs[i]].value;
-							posY_Span[RandomIndexs[i]].value -= velY_Span[RandomIndexs[i]].value;
-							posZ_Span[RandomIndexs[i]].value *= velZ_Span[RandomIndexs[i]].value;
+							posX_Span[RandomChunksIndexs[chunkCount][i]].value += velX_Span[RandomChunksIndexs[chunkCount][i]].value;
+							posY_Span[RandomChunksIndexs[chunkCount][i]].value -= velY_Span[RandomChunksIndexs[chunkCount][i]].value;
+							posZ_Span[RandomChunksIndexs[chunkCount][i]].value *= velZ_Span[RandomChunksIndexs[chunkCount][i]].value;
 						}
 					}
+					chunkCount++;
 				}
 			}
 		}

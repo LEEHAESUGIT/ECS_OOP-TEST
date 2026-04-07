@@ -23,7 +23,18 @@ namespace ECS_OOP_CompareTEST
 				.WithAll<VelocityXComponent>()
 				.WithNone<DummyComponent>()
 				.Build();
-			
+			foreach (var archetype in Query_FilterForSequential.GetArchetype(ecsMG.entityManager))
+			{
+				var active_IDx = archetype.GetTypeIndex(activeID);
+				foreach (var chunk in archetype.Chunks)
+				{
+					var active_Span = chunk.GetSpan<ActiveComponent>(active_IDx);
+					for (int i = 0; i < chunk.ChunkCount; i++)
+					{
+						active_Span[i].Is = true;
+					}
+				}
+			}
 		}
 
 		public void OnUpdate(ECSManager ecsMG)

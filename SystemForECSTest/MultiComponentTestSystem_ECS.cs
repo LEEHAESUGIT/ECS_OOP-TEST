@@ -9,6 +9,7 @@ namespace ECS_OOP_CompareTEST
 {
 	internal class MultiComponentTestSystem_ECS : ISystem
 	{
+		Random rand = new Random(1000);
 		EntityQuery Query_FilterForMultiComponent;
 		int activeID = ComponentTypeRegister.GetID<ActiveComponent>();
 		int posXID = ComponentTypeRegister.GetID<PositionXComponent>();
@@ -31,6 +32,18 @@ namespace ECS_OOP_CompareTEST
 										.WithNone<NeedInit>()
 										.WithNone<DummyComponent>()
 										.Build();
+			foreach (var archetype in Query_FilterForMultiComponent.GetArchetype(ecsMG.entityManager))
+			{
+				var active_IDx = archetype.GetTypeIndex(activeID);
+				foreach (var chunk in archetype.Chunks)
+				{
+					var active_Span = chunk.GetSpan<ActiveComponent>(active_IDx);
+					for (int i = 0; i < chunk.ChunkCount; i++)
+					{
+						active_Span[i].Is = true;
+					}
+				}
+			}
 		}
 		public void OnUpdate(ECSManager ecsMG)
 		{
